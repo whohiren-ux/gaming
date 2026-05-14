@@ -65,9 +65,9 @@ export function HeroArena() {
 
             {/* Heading */}
             <h1 className="text-[clamp(2.6rem,6vw,5rem)] font-black leading-[0.95] tracking-tight text-white">
-              Neon Nexus
+              Elite Arena
               <br />
-              <span className="text-gradient-neon">Gaming Cafe</span>
+            
             </h1>
 
             {/* Body */}

@@ -56,7 +56,7 @@
             blue: "#00A3FF",
             cyan: "#38E8FF",
             green: "#2BFF88",
-            amber: "#FFB020",
+            amber: "#00A3FF",
             red: "#FF4D6D",
             violet: "#8A7CFF"
           },

@@ -239,7 +239,6 @@
     inset-inline: 14px;
     top: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #38e8ff, #2bff88, transparent);
     opacity: 0.76;
   }
 
@@ -312,14 +311,6 @@
   .text-glow-green {
     text-shadow: 0 0 18px rgb(43 255 136 / 0.7);
   }
-
-  .text-gradient-neon {
-    background: linear-gradient(90deg, #38e8ff 0%, #2bff88 48%, #ffb020 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
   .section-label {
     display: inline-flex;
     align-items: center;
