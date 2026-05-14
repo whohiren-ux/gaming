@@ -120,26 +120,20 @@
     font-family: var(--font-sans);
     font-feature-settings: "rlig" 1, "calt" 1;
     text-rendering: optimizeLegibility;
-    background:
-      linear-gradient(115deg, rgb(3 5 8 / 0.84) 0%, rgb(7 10 16 / 0.9) 42%, rgb(3 5 8 / 0.96) 100%),
-      repeating-linear-gradient(90deg, rgb(0 163 255 / 0.055) 0 1px, transparent 1px 76px),
-      repeating-linear-gradient(0deg, rgb(56 232 255 / 0.042) 0 1px, transparent 1px 46px),
-      #030508;
+    background: linear-gradient(160deg, #030b14 0%, #030508 55%, #030508 100%);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  body::before {
-    content: "";
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background:
-      linear-gradient(90deg, transparent 0 14%, rgb(0 163 255 / 0.09) 15%, transparent 16% 58%, rgb(255 61 113 / 0.08) 59%, transparent 60%),
-      linear-gradient(180deg, rgb(56 232 255 / 0.06), transparent 22rem);
-    mask-image: linear-gradient(to bottom, black, transparent 78%);
-  }
+ body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(180deg, rgb(56 232 255 / 0.04), transparent 22rem);
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
 
   body::after {
     content: "";

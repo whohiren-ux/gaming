@@ -1,174 +1,150 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Gamepad2, RadioTower } from "lucide-react";
+import { ArrowRight, Gamepad2, RadioTower, Zap, Users, Clock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { LiveSetupCounter } from "@/components/marketing/live-setup-counter";
 
+const STATS = [
+  { icon: Zap, label: "Avg Session", value: "2.4h" },
+  { icon: Users, label: "Members", value: "1,200+" },
+  { icon: Clock, label: "Open Daily", value: "16h" },
+];
+
 export function HeroArena() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) {
-      return;
-    }
-
-    const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
-
-    let frame = 0;
-    let animationId = 0;
-    const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = Math.max(560, window.innerHeight * 0.82) * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${Math.max(560, window.innerHeight * 0.82)}px`;
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
-    const draw = () => {
-      const width = window.innerWidth;
-      const height = Math.max(560, window.innerHeight * 0.82);
-      frame += 1;
-      context.clearRect(0, 0, width, height);
-
-      const gradient = context.createLinearGradient(0, 0, 0, height);
-      gradient.addColorStop(0, "#030508");
-      gradient.addColorStop(0.42, "#07111f");
-      gradient.addColorStop(0.72, "#0A1018");
-      gradient.addColorStop(1, "#030508");
-      context.fillStyle = gradient;
-      context.fillRect(0, 0, width, height);
-
-      const sweep = (Math.sin(frame / 90) + 1) / 2;
-      const railGradient = context.createLinearGradient(0, height * 0.18, width, height * 0.64);
-      railGradient.addColorStop(0, "rgba(0, 163, 255, 0)");
-      railGradient.addColorStop(0.32, `rgba(0, 163, 255, ${0.08 + sweep * 0.05})`);
-      railGradient.addColorStop(0.58, `rgba(43, 255, 136, ${0.05 + sweep * 0.04})`);
-      railGradient.addColorStop(1, "rgba(255, 61, 113, 0)");
-      context.fillStyle = railGradient;
-      context.fillRect(0, 0, width, height);
-
-      context.save();
-      context.translate(width / 2, height * 0.78);
-      context.strokeStyle = "rgba(56, 232, 255, 0.22)";
-      context.lineWidth = 1;
-      context.shadowColor = "rgba(0, 163, 255, 0.26)";
-      context.shadowBlur = 8;
-      for (let i = -32; i <= 32; i += 1) {
-        const offset = (frame * 0.95) % 30;
-        context.beginPath();
-        context.moveTo(i * 42, -height * 0.64);
-        context.lineTo(i * 190, 126);
-        context.stroke();
-
-        context.beginPath();
-        context.moveTo(-width, -i * 19 + offset);
-        context.lineTo(width, -i * 19 + offset);
-        context.stroke();
-      }
-      context.restore();
-
-      context.save();
-      context.lineWidth = 2;
-      for (let i = 0; i < 4; i += 1) {
-        const y = height * (0.34 + i * 0.08);
-        const alpha = 0.08 + i * 0.025;
-        context.strokeStyle = `rgba(255, 176, 32, ${alpha})`;
-        context.beginPath();
-        context.moveTo(width * 0.08, y);
-        context.lineTo(width * 0.92, y + Math.sin(frame / 80 + i) * 10);
-        context.stroke();
-      }
-      context.restore();
-
-      for (let i = 0; i < 8; i += 1) {
-        const x = (width / 8) * i + 48;
-        const pulse = (Math.sin(frame / 34 + i * 0.9) + 1) / 2;
-        const podHeight = 112 + pulse * 24;
-        context.fillStyle = `rgba(56, 232, 255, ${0.08 + pulse * 0.13})`;
-        context.strokeStyle = `rgba(56, 232, 255, ${0.22 + pulse * 0.34})`;
-        context.shadowColor = "rgba(56, 232, 255, 0.28)";
-        context.shadowBlur = 16;
-        context.beginPath();
-        context.roundRect(x, height * 0.26 + pulse * 18, 76, podHeight, 12);
-        context.fill();
-        context.stroke();
-
-        context.shadowBlur = 0;
-        context.fillStyle = i % 3 === 0 ? "rgba(43, 255, 136, 0.55)" : "rgba(255, 176, 32, 0.48)";
-        context.fillRect(x + 14, height * 0.26 + pulse * 18 + 14, 28, 3);
-      }
-
-      context.fillStyle = "rgba(0, 0, 0, 0.28)";
-      context.fillRect(0, 0, width, height);
-
-      animationId = window.requestAnimationFrame(draw);
-    };
-
-    resize();
-    draw();
-    window.addEventListener("resize", resize);
-
-    return () => {
-      window.cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
   return (
-    <section className="relative isolate overflow-hidden border-b border-neon-blue/15">
-      <canvas ref={canvasRef} className="absolute inset-0 -z-10" aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink-950 to-transparent" />
-      <div className="container grid min-h-[82svh] items-center gap-10 pb-16 pt-14 lg:grid-cols-[1.05fr_0.95fr]">
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="max-w-3xl"
-        >
-          <div className="mb-5 inline-flex items-center gap-2 rounded-md border border-neon-blue/30 bg-neon-blue/10 px-3 py-1 text-sm text-neon-cyan">
-            <RadioTower className="size-4" />
-            Realtime PS5, PS4, and PC lounge control
-          </div>
-          <h1 className="text-balance text-5xl font-black leading-tight tracking-normal text-white drop-shadow-[0_0_24px_rgba(56,232,255,0.28)] sm:text-6xl lg:text-7xl">
-            Neon Nexus Gaming Cafe
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-            Premium cyber lounge booking, live setup tracking, session timers, memberships,
-            tournaments, and payments in one realtime operating system.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="shadow-neon">
-              <Link href="/booking">
-                Book a setup
-                <ArrowRight />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/availability">
-                <Gamepad2 />
-                Live availability
-              </Link>
-            </Button>
-          </div>
-        </motion.div>
+    <section className="relative isolate overflow-hidden border-b border-white/[0.06]">
+      {/* ── Background ── */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        {/* Base dark */}
+        <div className="absolute inset-0 bg-[#030508]" />
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.15, duration: 0.7 }}
-          className="neon-border rounded-lg"
-        >
-          <LiveSetupCounter />
-        </motion.div>
+        {/* Subtle blue glow — top left */}
+        <div
+          className="absolute -left-40 -top-40 h-[680px] w-[680px] rounded-full opacity-[0.18]"
+          style={{
+            background: "radial-gradient(circle, #00a3ff 0%, transparent 70%)",
+            filter: "blur(80px)",
+          }}
+        />
+
+        {/* Faint cyan glow — center right */}
+        <div
+          className="absolute right-0 top-1/4 h-[500px] w-[500px] rounded-full opacity-[0.10]"
+          style={{
+            background: "radial-gradient(circle, #38e8ff 0%, transparent 70%)",
+            filter: "blur(100px)",
+          }}
+        />
+
+        {/* Bottom fade */}
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#030508] to-transparent" />
+      </div>
+
+      {/* ── Thin accent line — top ── */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-cyan/40 to-transparent" />
+
+      <div className="container py-24 lg:py-32">
+        <div className="grid items-center gap-16 lg:grid-cols-2">
+
+          {/* ── LEFT: Copy ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Label */}
+            <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-neon-blue/25 bg-neon-blue/8 px-4 py-1.5">
+              <RadioTower className="size-3.5 text-neon-cyan" />
+              <span className="font-mono text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-neon-cyan">
+                Realtime PS5, PS4 &amp; PC Control
+              </span>
+            </div>
+
+            {/* Heading */}
+            <h1 className="text-[clamp(2.6rem,6vw,5rem)] font-black leading-[0.95] tracking-tight text-white">
+              Neon Nexus
+              <br />
+              <span className="text-gradient-neon">Gaming Cafe</span>
+            </h1>
+
+            {/* Body */}
+            <p className="mt-6 max-w-lg text-[1.05rem] leading-relaxed text-white/52">
+              Premium cyber lounge booking, live setup tracking, session timers,
+              memberships, tournaments, and payments — in one realtime operating system.
+            </p>
+
+            {/* CTAs */}
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Button asChild size="lg" className="shadow-neon gap-2">
+                <Link href="/booking">
+                  Book a Setup
+                  <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="gap-2">
+                <Link href="/availability">
+                  <Gamepad2 className="size-4" />
+                  Live Availability
+                </Link>
+              </Button>
+            </div>
+
+            {/* Inline stats strip */}
+            <div className="mt-14 flex items-center gap-8 border-t border-white/[0.07] pt-8">
+              {STATS.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex flex-col gap-0.5">
+                  <span className="font-display text-2xl font-black text-white">{value}</span>
+                  <span className="flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-widest text-white/38">
+                    <Icon className="size-3 opacity-60" />
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* ── RIGHT: Live counter card ── */}
+          <motion.div
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.18, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            className="relative"
+          >
+            {/* Card glow */}
+            <div
+              className="pointer-events-none absolute inset-0 -z-10 rounded-2xl opacity-30"
+              style={{
+                background: "radial-gradient(ellipse at 50% 30%, #00a3ff 0%, transparent 65%)",
+                filter: "blur(40px)",
+              }}
+            />
+
+            {/* Card */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/[0.09] bg-[#07101a]/80 shadow-[0_32px_80px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+              {/* Top shimmer line */}
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent" />
+
+              {/* Header bar */}
+              <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
+                <span className="font-mono text-[0.7rem] font-semibold uppercase tracking-widest text-white/40">
+                  Live Lounge Pulse
+                </span>
+                <span className="flex items-center gap-1.5 rounded-full bg-neon-green/10 px-2.5 py-0.5 font-mono text-[0.65rem] font-bold uppercase tracking-wider text-neon-green">
+                  <span className="status-dot" />
+                  Live
+                </span>
+              </div>
+
+              <div className="p-6">
+                <LiveSetupCounter />
+              </div>
+            </div>
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );
