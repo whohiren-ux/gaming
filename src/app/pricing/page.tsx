@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getPublicPricing } from "@/lib/setup-service";
+import { SETUP_TYPE_LABELS } from "@/lib/constants";
 import { formatINR } from "@/lib/money";
+import { getPublicPricing } from "@/lib/setup-service";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export default async function PricingPage() {
         {pricing.map((item) => (
           <Card key={item.type}>
             <CardHeader>
-              <CardTitle>{item.type.replace("_", " ")}</CardTitle>
+              <CardTitle>{SETUP_TYPE_LABELS[item.type]}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-black text-white">{formatINR(item.minHourlyPrice)}/hr</p>

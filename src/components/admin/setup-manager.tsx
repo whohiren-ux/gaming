@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { getSetupDisplayCode, getSetupDisplayName, getSetupTypeLabel, SETUP_TYPE_LABELS } from "@/lib/constants";
 
 type SetupRow = {
   id: string;
@@ -97,15 +98,15 @@ export function SetupManager({ initialSetups }: { initialSetups: SetupRow[] }) {
     toast.success("Setup updated.");
   }
 
-  async function disableSetup(id: string) {
+  async function deleteSetup(id: string) {
     const response = await fetch(`/api/setups/${id}`, { method: "DELETE" });
     const data = await response.json();
     if (!response.ok) {
-      toast.error(data.error || "Unable to disable setup.");
+      toast.error(data.error || "Unable to delete setup.");
       return;
     }
-    setSetups((current) => current.map((setup) => (setup.id === id ? { ...setup, status: "MAINTENANCE", isBookable: false } : setup)));
-    toast.success("Setup disabled.");
+    setSetups((current) => current.filter((setup) => setup.id !== id));
+    toast.success("Setup deleted.");
   }
 
   return (
@@ -113,7 +114,7 @@ export function SetupManager({ initialSetups }: { initialSetups: SetupRow[] }) {
       <Card className="xl:sticky xl:top-24 xl:self-start">
         <CardHeader>
           <CardTitle>New setup</CardTitle>
-          <p className="text-sm text-muted-foreground">Add PS5, PS4, or PC stations with pricing and buffer rules.</p>
+          <p className="text-sm text-muted-foreground">Add PS5, PS4, or racing wheel stations with pricing and buffer rules.</p>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={createSetup}>
@@ -129,7 +130,7 @@ export function SetupManager({ initialSetups }: { initialSetups: SetupRow[] }) {
                   <SelectContent>
                     <SelectItem value="PS5">PS5</SelectItem>
                     <SelectItem value="PS4">PS4</SelectItem>
-                    <SelectItem value="GAMING_PC">Gaming PC</SelectItem>
+                    <SelectItem value="GAMING_PC">{SETUP_TYPE_LABELS.GAMING_PC}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -166,18 +167,18 @@ export function SetupManager({ initialSetups }: { initialSetups: SetupRow[] }) {
             <CardContent className="grid gap-4 p-5 xl:grid-cols-[1fr_160px_160px_auto] xl:items-center">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-lg font-bold text-white">{setup.name}</h3>
-                  <Badge variant="outline">{setup.type.replace("_", " ")}</Badge>
+                  <h3 className="text-lg font-bold text-white">{getSetupDisplayName(setup)}</h3>
+                  <Badge variant="outline">{getSetupTypeLabel(setup.type)}</Badge>
                   <Badge variant={setup.isBookable ? "success" : "muted"}>{setup.status}</Badge>
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">{setup.stationCode} · {setup.floor}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{getSetupDisplayCode(setup)} · {setup.floor}</p>
               </div>
               <Input
                 type="number"
                 defaultValue={setup.hourlyPrice}
                 onBlur={(event) => updateSetup(setup.id, { hourlyPrice: Number(event.target.value) })}
               />
-              <Select defaultValue={setup.status} onValueChange={(status) => updateSetup(setup.id, { status })}>
+              <Select value={setup.status} onValueChange={(status) => updateSetup(setup.id, { status })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="AVAILABLE">Available</SelectItem>
@@ -189,7 +190,7 @@ export function SetupManager({ initialSetups }: { initialSetups: SetupRow[] }) {
                 <Button size="icon" variant="outline" onClick={() => updateSetup(setup.id, { isBookable: !setup.isBookable })} aria-label="Toggle bookable">
                   <Save />
                 </Button>
-                <Button size="icon" variant="destructive" onClick={() => disableSetup(setup.id)} aria-label="Disable setup">
+                <Button size="icon" variant="destructive" onClick={() => deleteSetup(setup.id)} aria-label="Delete setup">
                   <Trash2 />
                 </Button>
               </div>

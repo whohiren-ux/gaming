@@ -78,20 +78,36 @@ export async function DELETE(_: NextRequest, { params }: Params) {
     assertRole(session, ["ADMIN"]);
     const { id } = await params;
 
-    const setup = await prisma.setup.update({
-      where: { id },
-      data: {
-        isBookable: false,
-        status: "MAINTENANCE"
-      }
+    const setup = await prisma.$transaction(async (tx) => {
+      await tx.setup.findUniqueOrThrow({
+        where: { id },
+        select: { id: true }
+      });
+
+      await tx.analyticsSnapshot.updateMany({
+        where: { mostUsedSetupId: id },
+        data: { mostUsedSetupId: null }
+      });
+
+      await tx.setupSession.deleteMany({ where: { setupId: id } });
+      await tx.booking.deleteMany({ where: { setupId: id } });
+
+      return tx.setup.delete({
+        where: { id }
+      });
     });
 
     await publishRealtime(REALTIME_CHANNELS.availability, REALTIME_EVENTS.availabilityChanged, {
       setupId: setup.id,
-      reason: "setup-disabled"
+      reason: "setup-deleted"
     });
 
-    return ok({ setup });
+    await publishRealtime(REALTIME_CHANNELS.admin, REALTIME_EVENTS.availabilityChanged, {
+      setupId: setup.id,
+      reason: "setup-deleted"
+    });
+
+    return ok({ setup, deleted: true });
   } catch (error) {
     return apiError(error);
   }

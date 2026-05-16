@@ -1,6 +1,6 @@
 import { Prisma, type PaymentMethod } from "@prisma/client";
 
-import { SESSION_ENDING_ALERT_MINUTES } from "@/lib/constants";
+import { SESSION_ENDING_ALERT_MINUTES, getSetupDisplayName } from "@/lib/constants";
 import { addMinutesSafe, minutesBetween } from "@/lib/dates";
 import { assertSetupWindowAvailable } from "@/lib/booking-service";
 import { calculateSessionAmount, toDecimal, toNumber } from "@/lib/money";
@@ -79,7 +79,7 @@ export async function expireOverdueSessions() {
       await createNotification({
         type: "SESSION_EXPIRED",
         title: "Session expired",
-        message: `${session.setup.name} has crossed its scheduled end time.`,
+        message: `${getSetupDisplayName(session.setup)} has crossed its scheduled end time.`,
         metadata: {
           sessionId: session.id,
           setupId: session.setupId
@@ -123,7 +123,7 @@ export async function emitEndingSoonAlerts() {
         userId: session.customerId,
         type: "SESSION_ENDING",
         title: "10 minutes remaining",
-        message: `${session.setup.name} session is ending soon.`,
+        message: `${getSetupDisplayName(session.setup)} session is ending soon.`,
         metadata: {
           sessionId: session.id,
           setupId: session.setupId
@@ -466,7 +466,7 @@ export async function forceStopSession(sessionId: string, actorUserId: string, n
   await createNotification({
     type: "SYSTEM",
     title: "Session force stopped",
-    message: `${session.setup.name} was force stopped by staff.`,
+    message: `${getSetupDisplayName(session.setup)} was force stopped by staff.`,
     metadata: {
       sessionId,
       actorUserId

@@ -34,7 +34,7 @@ export function CountdownText({
     const seconds = totalSeconds % 60;
 
     if (hours > 0) {
-      return `${hours}h ${minutes}m`;
+      return `${hours}h ${minutes}m ${seconds.toString().padStart(2, "0")}s`;
     }
 
     return `${minutes}m ${seconds.toString().padStart(2, "0")}s`;

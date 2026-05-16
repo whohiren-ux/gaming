@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getSetupDisplayName } from "@/lib/constants";
 import { formatINR } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
 
@@ -49,7 +50,7 @@ export default async function AccountPage() {
                     <Badge variant={booking.status === "CONFIRMED" ? "success" : "warning"}>{booking.status}</Badge>
                   </div>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    {booking.setup.name} · {booking.startTime.toLocaleString()} · {formatINR(booking.priceTotal)}
+                    {getSetupDisplayName(booking.setup)} · {booking.startTime.toLocaleString()} · {formatINR(booking.priceTotal)}
                   </p>
                 </div>
                 <img

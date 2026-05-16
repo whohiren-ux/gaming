@@ -1,5 +1,6 @@
 import type { SetupStatus } from "@prisma/client";
 
+import { getSetupDisplayCode, getSetupDisplayName } from "@/lib/constants";
 import { emitEndingSoonAlerts, expireOverdueSessions } from "@/lib/session-service";
 import { formatClock, minutesFromNow } from "@/lib/dates";
 import { toNumber } from "@/lib/money";
@@ -89,10 +90,7 @@ export async function getLiveAvailability(): Promise<AvailabilitySetup[]> {
     if (status === "MAINTENANCE") {
       availabilityLabel = "Maintenance";
     } else if (activeSession) {
-      availabilityLabel =
-        remainingMinutes && remainingMinutes > 0
-          ? `Occupied - ${remainingMinutes} mins remaining`
-          : "Expired - needs checkout";
+      availabilityLabel = remainingMinutes && remainingMinutes > 0 ? "Live session running" : "Expired - needs checkout";
       availableAt = activeSession.endsAt.toISOString();
     } else if (currentBooking) {
       availabilityLabel = `Booked until ${formatClock(currentBooking.endTime)}`;
@@ -104,8 +102,8 @@ export async function getLiveAvailability(): Promise<AvailabilitySetup[]> {
 
     return {
       id: setup.id,
-      stationCode: setup.stationCode,
-      name: setup.name,
+      stationCode: getSetupDisplayCode(setup),
+      name: getSetupDisplayName(setup),
       type: setup.type,
       hourlyPrice: toNumber(setup.hourlyPrice),
       status: setup.status,

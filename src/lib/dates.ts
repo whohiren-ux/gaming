@@ -1,7 +1,7 @@
 import { addMinutes, differenceInMinutes, format, isBefore, startOfDay, subDays } from "date-fns";
 
 export function minutesFromNow(date: Date) {
-  return Math.max(0, differenceInMinutes(date, new Date()));
+  return Math.max(0, Math.ceil((date.getTime() - Date.now()) / 60_000));
 }
 
 export function minutesBetween(start: Date, end: Date) {
@@ -22,6 +22,10 @@ export function formatClock(date: Date) {
 
 export function formatDateTime(date: Date) {
   return format(date, "dd MMM yyyy, h:mm a");
+}
+
+export function formatDateTimeLocalInput(date: Date) {
+  return format(date, "yyyy-MM-dd'T'HH:mm");
 }
 
 export function dateRangeDays(days: number) {

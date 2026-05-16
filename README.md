@@ -1,6 +1,6 @@
 # Neon Nexus Gaming Cafe OS
 
-Production-ready Gaming Cafe Management Web App for PS5, PS4, and Gaming PC lounges.
+Production-ready Gaming Cafe Management Web App for PS5, PS4, and racing wheel lounges.
 
 ## Stack
 
