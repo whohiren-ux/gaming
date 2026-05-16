@@ -1,5 +1,6 @@
 import { addDays, format, startOfDay, subDays } from "date-fns";
 
+import { getSetupDisplayName } from "@/lib/constants";
 import { dateRangeDays, minutesBetween } from "@/lib/dates";
 import { toNumber } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
@@ -108,7 +109,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
   const setupUsageMap = new Map<string, { name: string; minutes: number; revenue: number }>();
   for (const session of allRecentSessions) {
     const current = setupUsageMap.get(session.setupId) ?? {
-      name: session.setup.name,
+      name: getSetupDisplayName(session.setup),
       minutes: 0,
       revenue: 0
     };
@@ -128,7 +129,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     peakUsageHour,
     activeSessions: activeSessions.map((session) => ({
       id: session.id,
-      setupName: session.setup.name,
+      setupName: getSetupDisplayName(session.setup),
       setupType: session.setup.type,
       customerName: session.customer?.name || session.customer?.phone || null,
       status: session.status,
@@ -188,7 +189,7 @@ export async function buildRevenueCsv() {
     payment.type,
     toNumber(payment.amount).toString(),
     payment.booking?.reference || "",
-    payment.setupSession?.setup.name || ""
+    payment.setupSession?.setup ? getSetupDisplayName(payment.setupSession.setup) : ""
   ]);
 
   return [header, ...rows]

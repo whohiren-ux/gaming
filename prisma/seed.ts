@@ -102,28 +102,28 @@ async function main() {
       specs: { display: "43in 1080p", controllers: 2 }
     },
     {
-      stationCode: "PC-01",
-      name: "RTX Battle Station 01",
+      stationCode: "RW-01",
+      name: "Racing Wheel 01",
       type: "GAMING_PC" as const,
       hourlyPrice: price(180),
       displayOrder: 6,
-      specs: { gpu: "RTX 4070", refreshRate: "240Hz", mouse: "Logitech G Pro" }
+      specs: { wheel: "Logitech G29", pedals: "3-pedal set", display: "55in 4K" }
     },
     {
-      stationCode: "PC-02",
-      name: "RTX Battle Station 02",
+      stationCode: "RW-02",
+      name: "Racing Wheel 02",
       type: "GAMING_PC" as const,
       hourlyPrice: price(180),
       displayOrder: 7,
-      specs: { gpu: "RTX 4070", refreshRate: "240Hz", mouse: "Razer Viper" }
+      specs: { wheel: "Thrustmaster T300 RS", pedals: "T3PA", display: "55in 4K" }
     },
     {
-      stationCode: "PC-03",
-      name: "RTX Battle Station 03",
+      stationCode: "RW-03",
+      name: "Racing Wheel 03",
       type: "GAMING_PC" as const,
       hourlyPrice: price(180),
       displayOrder: 8,
-      specs: { gpu: "RTX 4060 Ti", refreshRate: "165Hz", mouse: "HyperX Pulsefire" }
+      specs: { wheel: "Logitech G923", pedals: "Trueforce pedals", display: "43in 4K" }
     }
   ];
 
@@ -202,7 +202,7 @@ async function main() {
   });
 
   const ps5One = await prisma.setup.findUniqueOrThrow({ where: { stationCode: "PS5-01" } });
-  const pcTwo = await prisma.setup.findUniqueOrThrow({ where: { stationCode: "PC-02" } });
+  const racingWheelTwo = await prisma.setup.findUniqueOrThrow({ where: { stationCode: "RW-02" } });
 
   const activeSession = await prisma.setupSession.upsert({
     where: { id: "seed-active-session" },
@@ -232,15 +232,15 @@ async function main() {
     update: {},
     create: {
       reference: "NNX-SEED-BOOKING",
-      setupId: pcTwo.id,
+      setupId: racingWheelTwo.id,
       customerId: customer.id,
-      setupType: pcTwo.type,
+      setupType: racingWheelTwo.type,
       status: "CONFIRMED",
       source: "ONLINE",
       startTime: new Date(Date.now() + 1000 * 60 * 90),
       endTime: new Date(Date.now() + 1000 * 60 * 210),
       durationMinutes: 120,
-      bufferMinutes: pcTwo.bufferMinutes,
+      bufferMinutes: racingWheelTwo.bufferMinutes,
       priceTotal: price(360),
       tokenAmount: price(100),
       paidAmount: price(100),

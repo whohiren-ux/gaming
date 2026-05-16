@@ -4,6 +4,7 @@ import { CalendarDays, ChevronRight, Crown, Flame, ShieldCheck, Trophy, Zap } fr
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SETUP_TYPE_LABELS } from "@/lib/constants";
 import { formatINR } from "@/lib/money";
 import type { getMembershipPlans } from "@/lib/membership-service";
 import type { getPublicPricing } from "@/lib/setup-service";
@@ -84,7 +85,7 @@ export function PricingCards({ pricing }: { pricing: Pricing }) {
       <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <Badge variant="outline">Pricing</Badge>
-          <h2 className="mt-3 text-3xl font-bold tracking-normal">Console and PC rates</h2>
+          <h2 className="mt-3 text-3xl font-bold tracking-normal">Console and racing wheel rates</h2>
         </div>
         <Button asChild variant="outline">
           <Link href="/pricing">
@@ -97,7 +98,7 @@ export function PricingCards({ pricing }: { pricing: Pricing }) {
         {pricing.map((item) => (
           <Card key={item.type} className="relative overflow-hidden">
             <CardHeader>
-              <CardTitle>{item.type.replace("_", " ")}</CardTitle>
+              <CardTitle>{SETUP_TYPE_LABELS[item.type]}</CardTitle>
               <p className="text-sm text-muted-foreground">{item.setupCount} setups live</p>
             </CardHeader>
             <CardContent>

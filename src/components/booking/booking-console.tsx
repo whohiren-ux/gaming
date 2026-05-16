@@ -19,7 +19,8 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { SETUP_TYPE_LABELS } from "@/lib/constants";
+import { getSetupDisplayName, SETUP_TYPE_LABELS } from "@/lib/constants";
+import { formatDateTimeLocalInput } from "@/lib/dates";
 import { useCafeStore } from "@/store/cafe-store";
 
 type BookingResponse = {
@@ -28,7 +29,7 @@ type BookingResponse = {
     reference: string;
     tokenAmount: string | number;
     priceTotal: string | number;
-    setup: { name: string };
+    setup: { name: string; type?: string };
   };
 };
 
@@ -41,7 +42,7 @@ export function BookingConsole() {
   const [startTime, setStartTime] = useState(() => {
     const date = new Date(Date.now() + 10 * 60_000);
     date.setSeconds(0, 0);
-    return date.toISOString().slice(0, 16);
+    return formatDateTimeLocalInput(date);
   });
   const [paymentIntent, setPaymentIntent] = useState<"TOKEN" | "FULL">("TOKEN");
   const [submitting, setSubmitting] = useState(false);
@@ -97,7 +98,7 @@ export function BookingConsole() {
       amount: data.order.amount,
       currency: data.order.currency,
       name: "Neon Nexus Gaming Cafe",
-      description: `${booking.reference} · ${booking.setup.name}`,
+      description: `${booking.reference} · ${getSetupDisplayName(booking.setup)}`,
       order_id: data.order.id,
       handler: async (paymentResponse) => {
         const verify = await fetch("/api/payments/razorpay/verify", {
@@ -181,14 +182,20 @@ export function BookingConsole() {
           <form className="space-y-4" onSubmit={submitBooking}>
             <div className="space-y-2">
               <Label>Setup type</Label>
-              <Select value={setupType} onValueChange={(value) => setSetupType(value as typeof setupType)}>
+              <Select
+                value={setupType}
+                onValueChange={(value) => {
+                  setSetupType(value as typeof setupType);
+                  setSetupId("AUTO");
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="PS5">PS5</SelectItem>
                   <SelectItem value="PS4">PS4</SelectItem>
-                  <SelectItem value="GAMING_PC">Gaming PC</SelectItem>
+                  <SelectItem value="GAMING_PC">{SETUP_TYPE_LABELS.GAMING_PC}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -203,7 +210,7 @@ export function BookingConsole() {
                   <SelectItem value="AUTO">Auto assign best available</SelectItem>
                   {selectableSetups.map((setup) => (
                     <SelectItem key={setup.id} value={setup.id}>
-                      {setup.name} · {setup.availabilityLabel}
+                      {getSetupDisplayName(setup)} · {setup.availabilityLabel}
                     </SelectItem>
                   ))}
                 </SelectContent>

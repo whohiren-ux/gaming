@@ -1,6 +1,6 @@
 import { Prisma, type BookingStatus, type PaymentMethod, type PrismaClient, type Setup, type SetupType } from "@prisma/client";
 
-import { BOOKING_HOLD_MINUTES, BOOKING_TOKEN_MINIMUM_INR } from "@/lib/constants";
+import { BOOKING_HOLD_MINUTES, BOOKING_TOKEN_MINIMUM_INR, getSetupDisplayName } from "@/lib/constants";
 import { addMinutesSafe, formatClock } from "@/lib/dates";
 import { getActiveMembershipDiscountForUser } from "@/lib/membership-service";
 import { calculateSessionAmount, toDecimal, toNumber } from "@/lib/money";
@@ -229,7 +229,7 @@ export async function createBooking(input: {
 
   await publishRealtime(REALTIME_CHANNELS.admin, REALTIME_EVENTS.bookingChanged, {
     bookingId: booking.id,
-    setupName: booking.setup.name,
+    setupName: getSetupDisplayName(booking.setup),
     status: booking.status
   });
 
@@ -268,7 +268,7 @@ export async function confirmBookingPayment(
       userId: updated.customerId,
       type: "BOOKING_CONFIRMATION",
       title: "Booking confirmed",
-      message: `${updated.setup.name} is confirmed for ${formatClock(updated.startTime)}.`,
+      message: `${getSetupDisplayName(updated.setup)} is confirmed for ${formatClock(updated.startTime)}.`,
       metadata: {
         bookingId: updated.id,
         reference: updated.reference
@@ -307,7 +307,7 @@ export async function cancelBooking(bookingId: string, actorUserId: string, reas
     userId: booking.customerId,
     type: "SYSTEM",
     title: "Booking cancelled",
-    message: `${booking.reference} for ${booking.setup.name} was cancelled.`,
+    message: `${booking.reference} for ${getSetupDisplayName(booking.setup)} was cancelled.`,
     metadata: {
       bookingId,
       actorUserId,

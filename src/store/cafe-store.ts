@@ -72,12 +72,14 @@ export const useCafeStore = create<CafeStore>((set, get) => ({
     }
 
     const channel = client.subscribe(REALTIME_CHANNELS.admin);
+    channel.bind(REALTIME_EVENTS.availabilityChanged, refresh);
     channel.bind(REALTIME_EVENTS.sessionChanged, refresh);
     channel.bind(REALTIME_EVENTS.bookingChanged, refresh);
     channel.bind(REALTIME_EVENTS.paymentChanged, refresh);
     channel.bind(REALTIME_EVENTS.analyticsChanged, refresh);
 
     return () => {
+      channel.unbind(REALTIME_EVENTS.availabilityChanged, refresh);
       channel.unbind(REALTIME_EVENTS.sessionChanged, refresh);
       channel.unbind(REALTIME_EVENTS.bookingChanged, refresh);
       channel.unbind(REALTIME_EVENTS.paymentChanged, refresh);

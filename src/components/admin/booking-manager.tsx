@@ -7,6 +7,7 @@ import { CheckCircle2, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { getSetupDisplayName } from "@/lib/constants";
 import { formatINR } from "@/lib/money";
 
 type BookingRow = {
@@ -54,7 +55,7 @@ export function BookingManager({ initialBookings }: { initialBookings: BookingRo
                 <Badge variant="outline">{booking.paymentStatus}</Badge>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">
-                {booking.setup.name} · {booking.customer.name || booking.customer.email || booking.customer.phone}
+                {getSetupDisplayName(booking.setup)} · {booking.customer.name || booking.customer.email || booking.customer.phone}
               </p>
             </div>
             <div className="text-sm text-muted-foreground">

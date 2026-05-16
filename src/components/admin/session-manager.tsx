@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { getSetupDisplayName } from "@/lib/constants";
 import { formatINR } from "@/lib/money";
 import { useCafeStore } from "@/store/cafe-store";
 
@@ -129,7 +130,7 @@ export function SessionManager() {
                 <SelectContent>
                   {availableSetups.map((setup) => (
                     <SelectItem key={setup.id} value={setup.id}>
-                      {setup.name} · ₹{setup.hourlyPrice}/hr
+                      {getSetupDisplayName(setup)} · ₹{setup.hourlyPrice}/hr
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -189,7 +190,7 @@ export function SessionManager() {
             <CardContent className="grid gap-4 p-5 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <h3 className="text-xl font-bold text-white">{session.setup.name}</h3>
+                  <h3 className="text-xl font-bold text-white">{getSetupDisplayName(session.setup)}</h3>
                   <Badge variant="outline">{session.status}</Badge>
                 </div>
                 <div className="mt-3 grid gap-2 text-sm text-muted-foreground sm:grid-cols-4">

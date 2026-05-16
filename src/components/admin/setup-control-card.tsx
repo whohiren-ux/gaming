@@ -7,6 +7,7 @@ import { CountdownText } from "@/components/common/countdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getSetupDisplayName, getSetupTypeLabel } from "@/lib/constants";
 import { useCafeStore } from "@/store/cafe-store";
 import type { AvailabilitySetup } from "@/types";
 
@@ -40,8 +41,8 @@ export function SetupControlCard({ setup }: { setup: AvailabilitySetup }) {
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <CardTitle className="truncate">{setup.name}</CardTitle>
-            <p className="mt-2 text-sm text-muted-foreground">{setup.type.replace("_", " ")}</p>
+            <CardTitle className="truncate">{getSetupDisplayName(setup)}</CardTitle>
+            <p className="mt-2 text-sm text-muted-foreground">{getSetupTypeLabel(setup.type)}</p>
           </div>
           <Badge
             variant={

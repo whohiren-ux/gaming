@@ -59,7 +59,7 @@ export function HeroArena() {
             <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-neon-blue/25 bg-neon-blue/8 px-4 py-1.5">
               <RadioTower className="size-3.5 text-neon-cyan" />
               <span className="font-mono text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-neon-cyan">
-                Realtime PS5, PS4 &amp; PC Control
+                Realtime PS5, PS4 &amp; Racing Wheel Control
               </span>
             </div>
 

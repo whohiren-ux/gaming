@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Monitor, Search } from "lucide-react";
+import { Gamepad2, Search } from "lucide-react";
 
 import { CountdownText } from "@/components/common/countdown";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { SETUP_TYPE_LABELS } from "@/lib/constants";
+import { getSetupDisplayCode, getSetupDisplayName, getSetupTypeLabel, SETUP_TYPE_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useCafeStore } from "@/store/cafe-store";
 
@@ -47,9 +47,11 @@ export function AvailabilityBoard({ compact = false }: { compact?: boolean }) {
   const filtered = useMemo(
     () =>
       setups.filter((setup) => {
+        const displayName = getSetupDisplayName(setup);
+        const displayCode = getSetupDisplayCode(setup);
         const matchesQuery =
-          setup.name.toLowerCase().includes(query.toLowerCase()) ||
-          setup.stationCode.toLowerCase().includes(query.toLowerCase());
+          displayName.toLowerCase().includes(query.toLowerCase()) ||
+          displayCode.toLowerCase().includes(query.toLowerCase());
         const matchesType = type === "ALL" || setup.type === type;
         return matchesQuery && matchesType;
       }),
@@ -77,7 +79,7 @@ export function AvailabilityBoard({ compact = false }: { compact?: boolean }) {
               <SelectItem value="ALL">All setups</SelectItem>
               <SelectItem value="PS5">PS5</SelectItem>
               <SelectItem value="PS4">PS4</SelectItem>
-              <SelectItem value="GAMING_PC">Gaming PC</SelectItem>
+              <SelectItem value="GAMING_PC">{SETUP_TYPE_LABELS.GAMING_PC}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -97,9 +99,9 @@ export function AvailabilityBoard({ compact = false }: { compact?: boolean }) {
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
-                  <CardTitle className="truncate">{setup.name}</CardTitle>
+                  <CardTitle className="truncate">{getSetupDisplayName(setup)}</CardTitle>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    {setup.stationCode} · {SETUP_TYPE_LABELS[setup.type]}
+                    {getSetupDisplayCode(setup)} · {getSetupTypeLabel(setup.type)}
                   </p>
                 </div>
                 <span
@@ -108,7 +110,7 @@ export function AvailabilityBoard({ compact = false }: { compact?: boolean }) {
                     statusClass(setup.displayStatus)
                   )}
                 >
-                  <Monitor className="size-5" />
+                  <Gamepad2 className="size-5" />
                 </span>
               </div>
             </CardHeader>
