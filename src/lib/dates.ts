@@ -1,4 +1,11 @@
-import { addMinutes, differenceInMinutes, format, isBefore, startOfDay, subDays } from "date-fns";
+import { addMinutes, differenceInMinutes, isBefore, startOfDay, subDays } from "date-fns";
+import { format, toZonedTime, fromZonedTime } from "date-fns-tz";
+
+const TZ = "Asia/Kolkata";
+
+export function nowIST(): Date {
+  return toZonedTime(new Date(), TZ);
+}
 
 export function minutesFromNow(date: Date) {
   return Math.max(0, Math.ceil((date.getTime() - Date.now()) / 60_000));
@@ -17,18 +24,19 @@ export function isPastDate(date: Date) {
 }
 
 export function formatClock(date: Date) {
-  return format(date, "h:mm a");
+  return format(toZonedTime(date, TZ), "h:mm a", { timeZone: TZ });
 }
 
 export function formatDateTime(date: Date) {
-  return format(date, "dd MMM yyyy, h:mm a");
+  return format(toZonedTime(date, TZ), "dd MMM yyyy, h:mm a", { timeZone: TZ });
 }
 
 export function formatDateTimeLocalInput(date: Date) {
-  return format(date, "yyyy-MM-dd'T'HH:mm");
+  return format(toZonedTime(date, TZ), "yyyy-MM-dd'T'HH:mm", { timeZone: TZ });
 }
 
 export function dateRangeDays(days: number) {
-  const today = startOfDay(new Date());
+  const today = startOfDay(toZonedTime(new Date(), TZ));
   return Array.from({ length: days }, (_, index) => subDays(today, days - index - 1));
 }
+
