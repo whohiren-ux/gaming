@@ -125,7 +125,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
- body::before {
+body::before {
   content: "";
   pointer-events: none;
   position: fixed;
@@ -136,16 +136,14 @@
 }
 
   body::after {
-    content: "";
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background:
-      repeating-linear-gradient(0deg, rgb(255 255 255 / 0.028) 0 1px, transparent 1px 4px),
-      linear-gradient(180deg, transparent, rgb(0 0 0 / 0.38));
-    opacity: 0.7;
-  }
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.38));
+  opacity: 0.7;
+}
 
   h1,
   h2,
