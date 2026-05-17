@@ -226,19 +226,38 @@ body::before {
 
   .nav-orbit-stroke {
     fill: none;
-    stroke: url("#nav-orbit-gradient");
-    stroke-width: 1.35;
     stroke-linecap: round;
-    stroke-dasharray: 13 87;
-    stroke-dashoffset: 0;
     vector-effect: non-scaling-stroke;
-    animation: navOrbitStroke 3.4s linear infinite;
+    animation-duration: 3.4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
   }
 
-  .nav-orbit-stroke-glow {
-    opacity: 0.82;
-    stroke-width: 3.4;
-    filter: blur(2.2px) drop-shadow(0 0 8px rgb(56 232 255 / 0.92)) drop-shadow(0 0 18px rgb(0 163 255 / 0.55));
+  .nav-orbit-stroke-tail {
+    stroke: rgb(56 232 255 / 0.26);
+    stroke-width: 5;
+    stroke-dasharray: 10.5 89.5;
+    stroke-dashoffset: 0;
+    animation-name: navOrbitTail;
+    filter: blur(3px) drop-shadow(0 0 10px rgb(56 232 255 / 0.86)) drop-shadow(0 0 20px rgb(0 163 255 / 0.46));
+  }
+
+  .nav-orbit-stroke-mid {
+    stroke: rgb(56 232 255 / 0.72);
+    stroke-width: 2.25;
+    stroke-dasharray: 6.8 93.2;
+    stroke-dashoffset: -1.85;
+    animation-name: navOrbitMid;
+    filter: drop-shadow(0 0 8px rgb(56 232 255 / 0.72));
+  }
+
+  .nav-orbit-stroke-core {
+    stroke: rgb(235 253 255 / 0.96);
+    stroke-width: 1.15;
+    stroke-dasharray: 3.2 96.8;
+    stroke-dashoffset: -3.65;
+    animation-name: navOrbitCore;
+    filter: drop-shadow(0 0 5px rgb(56 232 255 / 0.9));
   }
 
   .cyber-panel {
@@ -422,9 +441,21 @@ body::before {
   }
 }
 
-@keyframes navOrbitStroke {
+@keyframes navOrbitTail {
   to {
     stroke-dashoffset: -100;
+  }
+}
+
+@keyframes navOrbitMid {
+  to {
+    stroke-dashoffset: -101.85;
+  }
+}
+
+@keyframes navOrbitCore {
+  to {
+    stroke-dashoffset: -103.65;
   }
 }
 
