@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="noise-overlay" />
         <AppProviders>
         <SiteHeader />
-       <main className="pt-[76px]">
+       <main>
      {children}
         </main>
       </AppProviders>
