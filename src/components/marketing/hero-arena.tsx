@@ -57,8 +57,6 @@ export function HeroArena() {
       </div>
 
       {/* ── Top accent line ── */}
-      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#38e8ff] to-transparent opacity-50" />
-
       <div className="container py-20 lg:py-28">
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
 
