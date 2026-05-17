@@ -38,17 +38,9 @@ export function SiteHeader() {
               preserveAspectRatio="none"
               viewBox="0 0 1100 52"
             >
-              <defs>
-                <linearGradient id="nav-orbit-gradient" x1="0" x2="1" y1="0" y2="0">
-                  <stop offset="0%" stopColor="#38e8ff" stopOpacity="0" />
-                  <stop offset="36%" stopColor="#38e8ff" stopOpacity="0.92" />
-                  <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
-                  <stop offset="70%" stopColor="#00a3ff" stopOpacity="0.82" />
-                  <stop offset="100%" stopColor="#38e8ff" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <rect className="nav-orbit-stroke nav-orbit-stroke-glow" pathLength="100" x="1" y="1" width="1098" height="50" rx="25" ry="25" />
-              <rect className="nav-orbit-stroke" pathLength="100" x="1" y="1" width="1098" height="50" rx="25" ry="25" />
+              <rect className="nav-orbit-stroke nav-orbit-stroke-tail" pathLength="100" x="1" y="1" width="1098" height="50" rx="25" ry="25" />
+              <rect className="nav-orbit-stroke nav-orbit-stroke-mid" pathLength="100" x="1" y="1" width="1098" height="50" rx="25" ry="25" />
+              <rect className="nav-orbit-stroke nav-orbit-stroke-core" pathLength="100" x="1" y="1" width="1098" height="50" rx="25" ry="25" />
             </svg>
 
             <Link href="/" className="relative z-10 flex shrink-0 items-center gap-2.5 pl-1">
