@@ -30,10 +30,28 @@ export function SiteHeader() {
         <div className="relative w-full max-w-[1100px]">
           <div className="pointer-events-none absolute -inset-x-7 -inset-y-4 rounded-full bg-[radial-gradient(ellipse_at_50%_50%,rgba(56,232,255,0.26),rgba(0,163,255,0.12)_38%,transparent_72%)] opacity-80 blur-2xl" />
 
-          <div className="nav-orbit-glow relative flex items-center justify-between gap-4 overflow-hidden rounded-full border border-white/[0.10] bg-white/[0.035] px-3 py-2 shadow-[0_0_0_1px_rgba(56,232,255,0.05),0_18px_55px_rgba(0,0,0,0.26)] backdrop-blur-2xl">
-            <div className="pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(90deg,rgba(56,232,255,0.11),rgba(255,255,255,0.035)_45%,rgba(0,163,255,0.10))]" />
+          <div className="relative flex items-center justify-between gap-4 overflow-hidden rounded-full border border-white/[0.10] bg-white/[0.035] px-3 py-2 shadow-[0_0_0_1px_rgba(56,232,255,0.05),0_18px_55px_rgba(0,0,0,0.26)] backdrop-blur-2xl">
+            <div className="pointer-events-none absolute inset-0 z-0 rounded-full bg-[linear-gradient(90deg,rgba(56,232,255,0.11),rgba(255,255,255,0.035)_45%,rgba(0,163,255,0.10))]" />
+            <svg
+              aria-hidden="true"
+              className="nav-orbit-svg"
+              preserveAspectRatio="none"
+              viewBox="0 0 1100 52"
+            >
+              <defs>
+                <linearGradient id="nav-orbit-gradient" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0%" stopColor="#38e8ff" stopOpacity="0" />
+                  <stop offset="36%" stopColor="#38e8ff" stopOpacity="0.92" />
+                  <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
+                  <stop offset="70%" stopColor="#00a3ff" stopOpacity="0.82" />
+                  <stop offset="100%" stopColor="#38e8ff" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <rect className="nav-orbit-stroke nav-orbit-stroke-glow" pathLength="100" x="1" y="1" width="1098" height="50" rx="25" ry="25" />
+              <rect className="nav-orbit-stroke" pathLength="100" x="1" y="1" width="1098" height="50" rx="25" ry="25" />
+            </svg>
 
-            <Link href="/" className="relative flex shrink-0 items-center gap-2.5 pl-1">
+            <Link href="/" className="relative z-10 flex shrink-0 items-center gap-2.5 pl-1">
               <span className="grid size-7 place-items-center rounded-full border border-neon-cyan/30 bg-neon-blue/10 text-neon-cyan">
                 <Gamepad2 className="size-3.5" />
               </span>
@@ -42,7 +60,7 @@ export function SiteHeader() {
               </span>
             </Link>
 
-            <nav className="relative hidden items-center gap-0.5 lg:flex">
+            <nav className="relative z-10 hidden items-center gap-0.5 lg:flex">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -59,7 +77,7 @@ export function SiteHeader() {
               ))}
             </nav>
 
-            <div className="relative hidden shrink-0 items-center gap-2 pr-1 lg:flex">
+            <div className="relative z-10 hidden shrink-0 items-center gap-2 pr-1 lg:flex">
               {(session?.user?.role === "ADMIN" || session?.user?.role === "STAFF") && (
                 <Link
                   href="/admin"
@@ -98,7 +116,7 @@ export function SiteHeader() {
 
             <button
               aria-label="Toggle navigation"
-              className="relative mr-1 grid size-8 place-items-center rounded-full border border-white/[0.08] text-white/60 transition-colors hover:bg-white/[0.04] hover:text-white lg:hidden"
+              className="relative z-10 mr-1 grid size-8 place-items-center rounded-full border border-white/[0.08] text-white/60 transition-colors hover:bg-white/[0.04] hover:text-white lg:hidden"
               onClick={() => setOpen((value) => !value)}
             >
               {open ? <X className="size-4" /> : <Menu className="size-4" />}
