@@ -260,6 +260,33 @@ body::before {
     filter: drop-shadow(0 0 5px rgb(56 232 255 / 0.9));
   }
 
+  @media (max-width: 1023px) {
+    .nav-orbit-svg {
+      inset: -1.5px;
+      height: calc(100% + 3px);
+      width: calc(100% + 3px);
+    }
+
+    .nav-orbit-stroke-tail {
+      stroke-width: 3.8;
+      stroke-dasharray: 8.6 91.4;
+      filter: blur(2px) drop-shadow(0 0 8px rgb(56 232 255 / 0.8)) drop-shadow(0 0 16px rgb(0 163 255 / 0.42));
+    }
+
+    .nav-orbit-stroke-mid {
+      stroke-width: 1.8;
+      stroke-dasharray: 5.6 94.4;
+      stroke-dashoffset: -1.5;
+      filter: drop-shadow(0 0 6px rgb(56 232 255 / 0.68));
+    }
+
+    .nav-orbit-stroke-core {
+      stroke-width: 0.95;
+      stroke-dasharray: 2.6 97.4;
+      stroke-dashoffset: -3;
+    }
+  }
+
   .cyber-panel {
     position: relative;
     border: 1px solid rgb(56 232 255 / 0.18);
