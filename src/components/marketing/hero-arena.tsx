@@ -57,7 +57,7 @@ export function HeroArena() {
       </div>
 
       {/* ── Top accent line ── */}
-      <div className="container py-20 lg:py-28">
+      <div className="container pb-16 pt-28 lg:py-28">
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
 
           {/* ══ LEFT ══ */}
@@ -67,9 +67,9 @@ export function HeroArena() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Live pill */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#38e8ff]/25 bg-[#38e8ff]/6 px-4 py-1.5">
+            <div className="mb-6 flex w-full items-center justify-center gap-2 rounded-full border border-[#38e8ff]/25 bg-[#38e8ff]/6 px-3 py-2 lg:inline-flex lg:w-auto lg:justify-start lg:px-4 lg:py-1.5">
               <span className="status-dot" />
-              <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.18em] text-[#38e8ff]">
+              <span className="whitespace-nowrap font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#38e8ff] min-[390px]:text-[0.68rem] lg:text-[0.68rem] lg:tracking-[0.18em]">
                 PS5 · PS4 · Racing Wheel · Live
               </span>
             </div>
@@ -94,14 +94,14 @@ export function HeroArena() {
             </h1>
 
             {/* Trust badges */}
-            <div className="mt-7 flex flex-wrap gap-2.5">
+            <div className="mt-7 grid grid-cols-2 gap-2.5 lg:flex lg:flex-wrap">
               {TRUST_BADGES.map(({ icon: Icon, text }) => (
                 <div
                   key={text}
-                  className="flex items-center gap-2 rounded-lg border border-[#00a3ff]/18 bg-[#00a3ff]/6 px-3.5 py-2"
+                  className="flex min-h-14 items-center justify-center gap-2 rounded-lg border border-[#00a3ff]/18 bg-[#00a3ff]/6 px-3 py-2 text-center lg:min-h-0 lg:justify-start lg:px-3.5"
                 >
                   <Icon className="size-3.5 text-[#38e8ff]" />
-                  <span className="font-mono text-[0.68rem] font-semibold uppercase tracking-wider text-[#38e8ff]">
+                  <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-[#38e8ff] min-[390px]:text-[0.68rem] lg:tracking-wider">
                     {text}
                   </span>
                 </div>
@@ -109,11 +109,11 @@ export function HeroArena() {
             </div>
 
             {/* CTAs */}
-            <div className="mt-10 flex flex-wrap gap-3">
+            <div className="mt-10 grid w-full max-w-[390px] gap-3 lg:flex lg:max-w-none lg:flex-wrap">
               <Button
                 asChild
                 size="lg"
-                className="gap-2 font-display text-sm font-bold uppercase tracking-wider shadow-neon"
+                className="h-14 w-full justify-center gap-2 font-display text-sm font-bold uppercase tracking-wider shadow-neon lg:h-11 lg:w-auto"
               >
                 <Link href="/booking">
                   Book a Setup
@@ -124,7 +124,7 @@ export function HeroArena() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="gap-2 font-display text-sm font-bold uppercase tracking-wider"
+                className="h-14 w-full justify-center gap-2 font-display text-sm font-bold uppercase tracking-wider lg:h-11 lg:w-auto"
               >
                 <Link href="/availability">
                   <Gamepad2 className="size-4" />
@@ -134,11 +134,11 @@ export function HeroArena() {
             </div>
 
             {/* Stats */}
-            <div className="mt-12 flex items-center gap-10 border-t border-white/[0.06] pt-8">
+            <div className="mt-12 grid grid-cols-3 gap-3 border-t border-white/[0.06] pt-8 lg:flex lg:items-center lg:gap-10">
               {STATS.map(({ icon: Icon, label, value }) => (
-                <div key={label} className="flex flex-col gap-1">
+                <div key={label} className="flex min-w-0 flex-col gap-1 lg:min-w-fit">
                   <span
-                    className="font-display text-3xl font-black"
+                    className="font-display text-[clamp(1.9rem,9vw,3rem)] font-black lg:text-3xl"
                     style={{
                       background: "linear-gradient(90deg, #ffffff 0%, #38e8ff 100%)",
                       WebkitBackgroundClip: "text",
@@ -148,7 +148,7 @@ export function HeroArena() {
                   >
                     {value}
                   </span>
-                  <span className="flex items-center gap-1.5 font-mono text-[0.62rem] uppercase tracking-widest text-white/32">
+                  <span className="flex items-center gap-1.5 font-mono text-[0.54rem] uppercase tracking-[0.14em] text-white/32 min-[390px]:text-[0.62rem] lg:tracking-widest">
                     <Icon className="size-3" />
                     {label}
                   </span>
