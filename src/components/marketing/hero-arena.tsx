@@ -20,7 +20,7 @@ const TRUST_BADGES = [
 
 export function HeroArena() {
   return (
-    <section className="relative isolate overflow-hidden border-b border-white/[0.06]">
+    <section className="relative isolate overflow-hidden">
 
       {/* ── Scanline texture overlay ── */}
       <div
