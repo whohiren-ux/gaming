@@ -6,6 +6,7 @@ import { CalendarCheck, Gamepad2, LogIn, Menu, ShieldCheck, X } from "lucide-rea
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
+import { BrandName } from "@/components/common/brand-name";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -47,9 +48,7 @@ export function SiteHeader() {
               <span className="grid size-7 place-items-center rounded-full border border-neon-cyan/30 bg-neon-blue/10 text-neon-cyan">
                 <Gamepad2 className="size-3.5" />
               </span>
-              <span className="font-display text-[0.82rem] font-bold uppercase tracking-[0.1em] text-white/90">
-                Elite Arena
-              </span>
+              <BrandName className="brand-name-header" />
             </Link>
 
             <nav className="relative z-10 hidden items-center gap-0.5 lg:flex">

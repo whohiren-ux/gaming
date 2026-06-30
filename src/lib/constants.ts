@@ -1,4 +1,4 @@
-export const CAFE_NAME = process.env.CAFE_NAME || "Neon Nexus Gaming Cafe";
+export const CAFE_NAME = process.env.CAFE_NAME || "HOUSE OF GAMERS";
 
 export const DEFAULT_SESSION_BUFFER_MINUTES = Number(
   process.env.DEFAULT_SESSION_BUFFER_MINUTES || 10

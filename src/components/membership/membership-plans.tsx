@@ -8,6 +8,7 @@ import { Crown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CAFE_NAME } from "@/lib/constants";
 import { formatINR } from "@/lib/money";
 
 type Plan = {
@@ -67,7 +68,7 @@ export function MembershipPlans({ plans }: { plans: Plan[] }) {
       key: data.keyId,
       amount: data.order.amount,
       currency: data.order.currency,
-      name: "Neon Nexus Gaming Cafe",
+      name: CAFE_NAME,
       description: plan.name,
       order_id: data.order.id,
       handler: async (paymentResponse) => {

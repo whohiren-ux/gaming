@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { getSetupDisplayName, SETUP_TYPE_LABELS } from "@/lib/constants";
+import { CAFE_NAME, getSetupDisplayName, SETUP_TYPE_LABELS } from "@/lib/constants";
 import { formatDateTimeLocalInput } from "@/lib/dates";
 import { useCafeStore } from "@/store/cafe-store";
 
@@ -97,7 +97,7 @@ export function BookingConsole() {
       key: data.keyId,
       amount: data.order.amount,
       currency: data.order.currency,
-      name: "Neon Nexus Gaming Cafe",
+      name: CAFE_NAME,
       description: `${booking.reference} · ${getSetupDisplayName(booking.setup)}`,
       order_id: data.order.id,
       handler: async (paymentResponse) => {

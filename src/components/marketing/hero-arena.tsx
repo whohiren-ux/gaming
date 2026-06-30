@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Gamepad2, Shield, Zap, Users, Clock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { BrandName } from "@/components/common/brand-name";
 import { LiveSetupCounter } from "@/components/marketing/live-setup-counter";
 
 const STATS = [
@@ -75,22 +76,8 @@ export function HeroArena() {
             </div>
 
             {/* Heading */}
-            <h1 className="font-display text-[clamp(3.2rem,7.5vw,6rem)] font-black uppercase leading-[0.88] tracking-tight">
-              <span className="block text-white drop-shadow-[0_0_40px_rgba(56,232,255,0.25)]">
-                Elite
-              </span>
-              <span
-                className="block"
-                style={{
-                  background: "linear-gradient(95deg, #38e8ff 0%, #00a3ff 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  filter: "drop-shadow(0 0 28px rgba(56,232,255,0.45))",
-                }}
-              >
-                Arena
-              </span>
+            <h1 className="max-w-[980px] text-balance">
+              <BrandName className="brand-name-hero" />
             </h1>
 
             {/* Trust badges */}
