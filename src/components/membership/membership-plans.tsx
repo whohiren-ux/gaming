@@ -84,7 +84,7 @@ export function MembershipPlans({ plans }: { plans: Plan[] }) {
           toast.warning("Payment received. Membership will sync after webhook confirmation.");
         }
       },
-      theme: { color: "#00A3FF" }
+      theme: { color: "#C20A16" }
     }).open();
   }
 

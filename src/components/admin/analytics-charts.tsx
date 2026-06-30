@@ -27,8 +27,8 @@ export function AnalyticsCharts({ summary }: { summary: DashboardSummary }) {
             <AreaChart data={summary.revenueTrend}>
               <defs>
                 <linearGradient id="revenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00A3FF" stopOpacity={0.7} />
-                  <stop offset="95%" stopColor="#00A3FF" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#FF2D3F" stopOpacity={0.7} />
+                  <stop offset="95%" stopColor="#FF2D3F" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid stroke="rgba(255,255,255,.08)" vertical={false} />
@@ -36,12 +36,12 @@ export function AnalyticsCharts({ summary }: { summary: DashboardSummary }) {
               <YAxis stroke="#8ba3b8" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  background: "#07111f",
-                  border: "1px solid rgba(0,163,255,.25)",
+                  background: "#120407",
+                  border: "1px solid rgba(255,45,63,.28)",
                   borderRadius: 8
                 }}
               />
-              <Area type="monotone" dataKey="revenue" stroke="#38E8FF" fill="url(#revenue)" strokeWidth={2} />
+              <Area type="monotone" dataKey="revenue" stroke="#FF2D3F" fill="url(#revenue)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
@@ -59,8 +59,8 @@ export function AnalyticsCharts({ summary }: { summary: DashboardSummary }) {
               <YAxis stroke="#8ba3b8" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  background: "#07111f",
-                  border: "1px solid rgba(0,163,255,.25)",
+                  background: "#120407",
+                  border: "1px solid rgba(255,45,63,.28)",
                   borderRadius: 8
                 }}
               />

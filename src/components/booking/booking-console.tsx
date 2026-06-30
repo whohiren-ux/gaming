@@ -115,7 +115,7 @@ export function BookingConsole() {
         }
       },
       theme: {
-        color: "#00A3FF"
+        color: "#C20A16"
       }
     });
 
