@@ -123,7 +123,7 @@ export function GtaBanner() {
   return (
     <section className="container py-8">
       <div className="relative overflow-hidden rounded-lg border border-neon-blue/25 bg-ink-950 p-8 shadow-neon-sm">
-        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(0,163,255,.18),transparent_45%,rgba(43,255,136,.12))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(255,45,63,.2),transparent_45%,rgba(125,0,7,.18))]" />
         <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <Badge variant="warning">Featured Banner</Badge>

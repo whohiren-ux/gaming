@@ -29,10 +29,10 @@ export function SiteHeader() {
     <>
       <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
         <div className="relative w-full max-w-[1100px]">
-          <div className="pointer-events-none absolute -inset-x-7 -inset-y-4 rounded-full bg-[radial-gradient(ellipse_at_50%_50%,rgba(56,232,255,0.26),rgba(0,163,255,0.12)_38%,transparent_72%)] opacity-80 blur-2xl" />
+          <div className="pointer-events-none absolute -inset-x-7 -inset-y-4 rounded-full bg-[radial-gradient(ellipse_at_50%_50%,rgba(255,45,63,0.24),rgba(125,0,7,0.16)_38%,transparent_72%)] opacity-80 blur-2xl" />
 
-          <div className="relative flex min-h-14 items-center justify-between gap-4 overflow-hidden rounded-full border border-white/[0.10] bg-white/[0.035] px-3 py-2 shadow-[0_0_0_1px_rgba(56,232,255,0.05),0_18px_55px_rgba(0,0,0,0.26)] backdrop-blur-2xl lg:min-h-0">
-            <div className="pointer-events-none absolute inset-0 z-0 rounded-full bg-[linear-gradient(90deg,rgba(56,232,255,0.11),rgba(255,255,255,0.035)_45%,rgba(0,163,255,0.10))]" />
+          <div className="relative flex min-h-14 items-center justify-between gap-4 overflow-hidden rounded-full border border-white/[0.10] bg-white/[0.035] px-3 py-2 shadow-[0_0_0_1px_rgba(255,45,63,0.08),0_18px_55px_rgba(0,0,0,0.26)] backdrop-blur-2xl lg:min-h-0">
+            <div className="pointer-events-none absolute inset-0 z-0 rounded-full bg-[linear-gradient(90deg,rgba(255,45,63,0.12),rgba(255,255,255,0.035)_45%,rgba(125,0,7,0.14))]" />
             <svg
               aria-hidden="true"
               className="nav-orbit-svg"
@@ -59,7 +59,7 @@ export function SiteHeader() {
                   className={cn(
                     "rounded-full px-4 py-1.5 font-sans text-[0.8rem] font-medium transition-all duration-200 hover:bg-white/[0.035]",
                     pathname === item.href
-                      ? "bg-white/[0.055] text-white shadow-[inset_0_0_0_1px_rgba(56,232,255,0.16),0_0_16px_rgba(56,232,255,0.12)]"
+                      ? "bg-white/[0.055] text-white shadow-[inset_0_0_0_1px_rgba(255,45,63,0.18),0_0_16px_rgba(255,45,63,0.14)]"
                       : "text-white/45 hover:text-white/75"
                   )}
                 >
@@ -98,7 +98,7 @@ export function SiteHeader() {
 
               <Link
                 href="/booking"
-                className="flex items-center gap-1.5 rounded-full bg-neon-cyan px-5 py-2 font-display text-[0.78rem] font-bold uppercase tracking-wide text-[#030508] shadow-[0_0_18px_rgba(56,232,255,0.42),0_0_42px_rgba(0,163,255,0.18)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_28px_rgba(56,232,255,0.62),0_0_70px_rgba(0,163,255,0.22)] active:scale-[0.97]"
+                className="flex items-center gap-1.5 rounded-full bg-neon-cyan px-5 py-2 font-display text-[0.78rem] font-bold uppercase tracking-wide text-[#030508] shadow-[0_0_18px_rgba(255,45,63,0.44),0_0_42px_rgba(125,0,7,0.26)] transition-all duration-200 hover:scale-[1.04] hover:shadow-[0_0_28px_rgba(255,45,63,0.64),0_0_70px_rgba(125,0,7,0.32)] active:scale-[0.97]"
               >
                 <CalendarCheck className="size-3.5" />
                 Book Setup
@@ -120,7 +120,7 @@ export function SiteHeader() {
 
       {open && (
         <div className="fixed inset-x-4 top-[72px] z-[49] lg:hidden">
-          <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#060e1a]/88 shadow-[0_20px_60px_rgba(0,0,0,0.46),0_0_34px_rgba(56,232,255,0.12)] backdrop-blur-2xl">
+          <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#120407]/88 shadow-[0_20px_60px_rgba(0,0,0,0.46),0_0_34px_rgba(255,45,63,0.14)] backdrop-blur-2xl">
             <div className="h-px w-full bg-gradient-to-r from-transparent via-neon-cyan/30 to-transparent" />
 
             <div className="space-y-0.5 p-3">
@@ -145,7 +145,7 @@ export function SiteHeader() {
               <Link
                 href="/booking"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-xl bg-neon-cyan py-3 font-display text-sm font-bold uppercase tracking-wider text-[#030508] shadow-[0_0_18px_rgba(56,232,255,0.3)]"
+                className="flex items-center justify-center gap-2 rounded-xl bg-neon-cyan py-3 font-display text-sm font-bold uppercase tracking-wider text-[#030508] shadow-[0_0_18px_rgba(255,45,63,0.36)]"
               >
                 <CalendarCheck className="size-4" />
                 Book a Setup

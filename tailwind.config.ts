@@ -53,10 +53,10 @@
             foreground: "hsl(var(--card-foreground))"
           },
           neon: {
-            blue: "#00A3FF",
-            cyan: "#38E8FF",
+            blue: "#7D0007",
+            cyan: "#FF2D3F",
             green: "#2BFF88",
-            amber: "#00A3FF",
+            amber: "#FFB020",
             red: "#FF4D6D",
             violet: "#8A7CFF"
           },
@@ -73,16 +73,16 @@
           sm: "calc(var(--radius) - 4px)"
         },
         boxShadow: {
-          "neon-sm": "0 0 16px rgba(0, 163, 255, 0.32)",
-          neon: "0 0 28px rgba(0, 163, 255, 0.42)",
+          "neon-sm": "0 0 16px rgba(255, 45, 63, 0.34)",
+          neon: "0 0 28px rgba(255, 45, 63, 0.44)",
           "neon-green": "0 0 22px rgba(43, 255, 136, 0.35)",
           panel: "0 18px 60px rgba(0, 0, 0, 0.32)"
         },
         backgroundImage: {
           "grid-fade":
-            "linear-gradient(rgba(0,163,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(0,163,255,.12) 1px, transparent 1px)",
+            "linear-gradient(rgba(255,45,63,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,45,63,.12) 1px, transparent 1px)",
           "radial-neon":
-            "radial-gradient(circle at 30% 20%, rgba(0,163,255,.22), transparent 34%), radial-gradient(circle at 80% 0%, rgba(56,232,255,.14), transparent 24%)"
+            "radial-gradient(circle at 30% 20%, rgba(255,45,63,.22), transparent 34%), radial-gradient(circle at 80% 0%, rgba(125,0,7,.18), transparent 24%)"
         },
         keyframes: {
           scan: {

@@ -39,7 +39,7 @@ export function HeroArena() {
         <div
           className="absolute -left-60 -top-60 h-[900px] w-[900px] rounded-full"
           style={{
-            background: "radial-gradient(circle, rgba(0,163,255,0.20) 0%, transparent 65%)",
+            background: "radial-gradient(circle, rgba(160,12,20,0.28) 0%, transparent 65%)",
             filter: "blur(70px)",
           }}
         />
@@ -48,7 +48,7 @@ export function HeroArena() {
         <div
           className="absolute -right-20 top-0 h-full w-[500px]"
           style={{
-            background: "linear-gradient(180deg, rgba(56,232,255,0.06) 0%, transparent 60%)",
+            background: "linear-gradient(180deg, rgba(255,45,63,0.08) 0%, transparent 60%)",
             filter: "blur(40px)",
           }}
         />
@@ -59,24 +59,25 @@ export function HeroArena() {
 
       {/* ── Top accent line ── */}
       <div className="container pb-16 pt-28 lg:py-28">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)]">
 
           {/* ══ LEFT ══ */}
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="min-w-0"
           >
             {/* Live pill */}
-            <div className="mb-6 flex w-full items-center justify-center gap-2 rounded-full border border-[#38e8ff]/25 bg-[#38e8ff]/6 px-3 py-2 lg:inline-flex lg:w-auto lg:justify-start lg:px-4 lg:py-1.5">
+            <div className="mb-6 flex w-full items-center justify-center gap-2 rounded-full border border-[#ff2d3f]/30 bg-[#ff2d3f]/8 px-3 py-2 lg:inline-flex lg:w-auto lg:justify-start lg:px-4 lg:py-1.5">
               <span className="status-dot" />
-              <span className="whitespace-nowrap font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#38e8ff] min-[390px]:text-[0.68rem] lg:text-[0.68rem] lg:tracking-[0.18em]">
-                PS5 · PS4 · Racing Wheel · Live
+              <span className="whitespace-nowrap font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#ff2d3f] min-[390px]:text-[0.68rem] lg:text-[0.68rem] lg:tracking-[0.18em]">
+                PS5 - PS4 - Racing Wheel - Live
               </span>
             </div>
 
             {/* Heading */}
-            <h1 className="max-w-[980px] text-balance">
+            <h1 className="max-w-full overflow-visible text-balance">
               <BrandName className="brand-name-hero" />
             </h1>
 
@@ -85,10 +86,10 @@ export function HeroArena() {
               {TRUST_BADGES.map(({ icon: Icon, text }) => (
                 <div
                   key={text}
-                  className="flex min-h-14 items-center justify-center gap-2 rounded-lg border border-[#00a3ff]/18 bg-[#00a3ff]/6 px-3 py-2 text-center lg:min-h-0 lg:justify-start lg:px-3.5"
+                  className="flex min-h-14 items-center justify-center gap-2 rounded-lg border border-[#ff2d3f]/22 bg-[#7d0007]/14 px-3 py-2 text-center lg:min-h-0 lg:justify-start lg:px-3.5"
                 >
-                  <Icon className="size-3.5 text-[#38e8ff]" />
-                  <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-[#38e8ff] min-[390px]:text-[0.68rem] lg:tracking-wider">
+                  <Icon className="size-3.5 text-[#ff2d3f]" />
+                  <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-[#ff2d3f] min-[390px]:text-[0.68rem] lg:tracking-wider">
                     {text}
                   </span>
                 </div>
@@ -127,7 +128,7 @@ export function HeroArena() {
                   <span
                     className="font-display text-[clamp(1.9rem,9vw,3rem)] font-black lg:text-3xl"
                     style={{
-                      background: "linear-gradient(90deg, #ffffff 0%, #38e8ff 100%)",
+                      background: "linear-gradient(90deg, #ffffff 0%, #ff2d3f 100%)",
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                       backgroundClip: "text",
@@ -155,24 +156,24 @@ export function HeroArena() {
             <div
               className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl opacity-35"
               style={{
-                background: "radial-gradient(ellipse at 50% 40%, #00a3ff 0%, transparent 70%)",
+                background: "radial-gradient(ellipse at 50% 40%, #ff2d3f 0%, transparent 70%)",
                 filter: "blur(55px)",
               }}
             />
 
             {/* Corner brackets */}
-            <div className="pointer-events-none absolute -left-px -top-px h-8 w-8 rounded-tl-2xl border-l-2 border-t-2 border-[#38e8ff]/50" />
-            <div className="pointer-events-none absolute -bottom-px -right-px h-8 w-8 rounded-br-2xl border-b-2 border-r-2 border-[#38e8ff]/50" />
+            <div className="pointer-events-none absolute -left-px -top-px h-8 w-8 rounded-tl-2xl border-l-2 border-t-2 border-[#ff2d3f]/55" />
+            <div className="pointer-events-none absolute -bottom-px -right-px h-8 w-8 rounded-br-2xl border-b-2 border-r-2 border-[#ff2d3f]/55" />
 
             {/* Card */}
             <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#050d18]/90 shadow-[0_40px_100px_rgba(0,0,0,0.75)] backdrop-blur-2xl">
               {/* Top shimmer */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#38e8ff]/60 to-transparent" />
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#ff2d3f]/70 to-transparent" />
 
               {/* Card header */}
               <div className="flex items-center justify-between border-b border-white/[0.05] px-5 py-3.5">
                 <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#38e8ff] shadow-[0_0_6px_#38e8ff]" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#ff2d3f] shadow-[0_0_6px_#ff2d3f]" />
                   <span className="font-mono text-[0.64rem] font-bold uppercase tracking-[0.18em] text-white/38">
                     Live Lounge Pulse
                   </span>
