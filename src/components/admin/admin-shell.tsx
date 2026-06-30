@@ -17,6 +17,7 @@ import {
 import { signOut } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
+import { BrandName } from "@/components/common/brand-name";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -42,7 +43,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <Gamepad2 className="size-5" />
           </span>
           <div>
-            <p className="font-black text-white">Neon Nexus</p>
+            <BrandName as="p" className="brand-name-admin" />
             <p className="text-xs text-muted-foreground">Cafe Operating System</p>
           </div>
         </Link>

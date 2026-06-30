@@ -1,4 +1,5 @@
 import { ContactForm } from "@/components/contact/contact-form";
+import { BrandName } from "@/components/common/brand-name";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -16,7 +17,9 @@ export default function ContactPage() {
           <CardContent className="space-y-4 p-5 text-sm text-muted-foreground">
             <div>
               <p className="font-semibold text-white">Address</p>
-              <p>Neon Nexus Gaming Cafe, Main Floor, Esports Lane</p>
+              <p>
+                <BrandName className="brand-name-inline" />, Main Floor, Esports Lane
+              </p>
             </div>
             <div>
               <p className="font-semibold text-white">Hours</p>
