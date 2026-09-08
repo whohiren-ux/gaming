@@ -106,6 +106,8 @@ export const membershipPlanSchema = z.object({
   description: z.string().max(500).optional()
 });
 
+export const membershipPlanUpdateSchema = membershipPlanSchema.partial();
+
 export const expenseSchema = z.object({
   title: z.string().min(2).max(120),
   category: z.string().min(2).max(80),
