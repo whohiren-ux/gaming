@@ -83,6 +83,90 @@ export async function createMembershipPlanAction(formData: FormData) {
   revalidatePath("/memberships");
 }
 
+export async function updateMembershipPlanAction(planId: string, formData: FormData) {
+  const session = await auth();
+  assertRole(session, ["ADMIN"]);
+  const input = membershipPlanSchema.parse({
+    name: formData.get("name"),
+    type: formData.get("type"),
+    price: formData.get("price"),
+    includedMinutes: formData.get("includedMinutes"),
+    discountPercent: formData.get("discountPercent"),
+    priorityBooking: formData.get("priorityBooking") === "on",
+    maxDailyMinutes: formData.get("maxDailyMinutes") || undefined,
+    description: formData.get("description") || undefined
+  });
+
+  await prisma.membershipPlan.update({
+    where: { id: planId },
+    data: {
+      ...input,
+      price: new Prisma.Decimal(input.price)
+    }
+  });
+
+  revalidatePath("/admin/memberships");
+  revalidatePath("/memberships");
+}
+
+export async function toggleMembershipPlanActiveAction(planId: string) {
+  const session = await auth();
+  assertRole(session, ["ADMIN"]);
+
+  const plan = await prisma.membershipPlan.findUniqueOrThrow({ where: { id: planId } });
+  await prisma.membershipPlan.update({
+    where: { id: planId },
+    data: { isActive: !plan.isActive }
+  });
+
+  revalidatePath("/admin/memberships");
+  revalidatePath("/memberships");
+}
+
+export async function deleteMembershipPlanAction(planId: string) {
+  const session = await auth();
+  assertRole(session, ["ADMIN"]);
+
+  const activeCount = await prisma.membership.count({
+    where: { planId, status: "ACTIVE" }
+  });
+  if (activeCount > 0) {
+    throw new Error("Cannot delete plan with active members. Deactivate it instead.");
+  }
+
+  await prisma.membership.deleteMany({ where: { planId } });
+  await prisma.membershipPlan.delete({ where: { id: planId } });
+
+  revalidatePath("/admin/memberships");
+  revalidatePath("/memberships");
+}
+
+export async function assignMembershipAction(formData: FormData) {
+  const session = await auth();
+  assertRole(session, ["ADMIN"]);
+
+  const userId = String(formData.get("userId") || "");
+  const planId = String(formData.get("planId") || "");
+  if (!userId || !planId) throw new Error("userId and planId required");
+
+  const { activateMembership } = await import("@/lib/membership-service");
+  await activateMembership({ userId, planId });
+
+  revalidatePath("/admin/memberships");
+}
+
+export async function cancelMembershipAction(membershipId: string) {
+  const session = await auth();
+  assertRole(session, ["ADMIN"]);
+
+  await prisma.membership.update({
+    where: { id: membershipId },
+    data: { status: "CANCELLED", remainingMinutes: 0 }
+  });
+
+  revalidatePath("/admin/memberships");
+}
+
 export async function updateUserRoleAction(formData: FormData) {
   const session = await auth();
   assertRole(session, ["ADMIN"]);
