@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 const serviceWorker = `
-const CACHE_NAME = "neon-nexus-v1";
+const CACHE_NAME = "house-of-gamers-v1";
 const STATIC_PATHS = ["/", "/booking", "/availability", "/pricing", "/memberships"];
 
 self.addEventListener("install", (event) => {

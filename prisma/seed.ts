@@ -24,11 +24,11 @@ async function main() {
   const customerPasswordHash = await bcrypt.hash("Player@12345", 12);
 
   await prisma.user.upsert({
-    where: { email: "admin@neonnexus.local" },
+    where: { email: "admin@houseofgamers.local" },
     update: {},
     create: {
-      name: "Neon Nexus Admin",
-      email: "admin@neonnexus.local",
+      name: "House of Gamers Admin",
+      email: "admin@houseofgamers.local",
       phone: "+919999999901",
       role: "ADMIN",
       passwordHash
@@ -36,11 +36,11 @@ async function main() {
   });
 
   const staff = await prisma.user.upsert({
-    where: { email: "staff@neonnexus.local" },
+    where: { email: "staff@houseofgamers.local" },
     update: {},
     create: {
-      name: "Front Desk Staff",
-      email: "staff@neonnexus.local",
+      name: "House of Gamers Staff",
+      email: "staff@houseofgamers.local",
       phone: "+919999999902",
       role: "STAFF",
       passwordHash
@@ -48,11 +48,11 @@ async function main() {
   });
 
   const customer = await prisma.user.upsert({
-    where: { email: "player@neonnexus.local" },
+    where: { email: "player@houseofgamers.local" },
     update: {},
     create: {
-      name: "Aarav Player",
-      email: "player@neonnexus.local",
+      name: "House of Gamers Player",
+      email: "player@houseofgamers.local",
       phone: "+919999999903",
       role: "CUSTOMER",
       passwordHash: customerPasswordHash,
@@ -299,8 +299,8 @@ async function main() {
   });
 
   console.log("Seed complete");
-  console.log("Admin login: admin@neonnexus.local / Admin@12345");
-  console.log("Customer login: player@neonnexus.local / Player@12345");
+  console.log("Admin login: admin@houseofgamers.local / Admin@12345");
+  console.log("Customer login: player@houseofgamers.local / Player@12345");
 }
 
 main()
