@@ -82,9 +82,9 @@ npm run dev
 Seed credentials:
 
 ```txt
-admin@neonnexus.local / Admin@12345
-staff@neonnexus.local / Admin@12345
-player@neonnexus.local / Player@12345
+admin@houseofgamers.local / Admin@12345
+staff@houseofgamers.local / Admin@12345
+player@houseofgamers.local / Player@12345
 ```
 
 ## Database
