@@ -19,5 +19,16 @@ export default async function AdminMembershipsPage() {
     })
   ]);
 
-  return <MembershipManager plans={plans} users={users} />;
+  const serializedPlans = plans.map((plan) => ({
+    ...plan,
+    price: plan.price.toNumber(),
+    memberships: plan.memberships.map((m) => ({
+      id: m.id,
+      status: m.status,
+      remainingMinutes: m.remainingMinutes,
+      user: m.user
+    }))
+  }));
+
+  return <MembershipManager plans={serializedPlans} users={users} />;
 }

@@ -45,7 +45,7 @@ type Plan = {
   id: string;
   name: string;
   type: string;
-  price: { toNumber: () => number };
+  price: number;
   includedMinutes: number;
   discountPercent: number;
   priorityBooking: boolean;
@@ -283,7 +283,7 @@ export function MembershipManager({ plans, users }: { plans: Plan[]; users: User
                         <option value="">Choose plan...</option>
                         {plans.filter((p) => p.isActive).map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.name} - {formatINR(p.price.toNumber())}
+                            {p.name} - {formatINR(p.price)}
                           </option>
                         ))}
                       </select>
@@ -337,7 +337,7 @@ export function MembershipManager({ plans, users }: { plans: Plan[]; users: User
                         </div>
                         <div className="space-y-2">
                           <Label>Price (INR)</Label>
-                          <Input name="price" type="number" min="0" defaultValue={plan.price.toNumber()} required />
+                          <Input name="price" type="number" min="0" defaultValue={plan.price} required />
                         </div>
                       </div>
                       <div className="grid gap-4 sm:grid-cols-2">
@@ -422,7 +422,7 @@ export function MembershipManager({ plans, users }: { plans: Plan[]; users: User
                         )}
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <p className="text-2xl font-black text-white">{formatINR(plan.price.toNumber())}</p>
+                        <p className="text-2xl font-black text-white">{formatINR(plan.price)}</p>
                         <div className="flex gap-1.5">
                           <Button
                             size="sm"
