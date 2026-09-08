@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Gamepad2, Shield, Zap, Users, Clock } from "lucide-react";
+import { ArrowRight, Gamepad2, Shield, Zap, Users, Clock, Wifi } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { BrandName } from "@/components/common/brand-name";
@@ -15,40 +15,41 @@ const STATS = [
 ];
 
 const TRUST_BADGES = [
-  { icon: Shield, text: "Safe & Secure Zone" },
-  { icon: Gamepad2, text: "Comfort Gaming" },
+  { icon: Shield, text: "Secure Zone" },
+  { icon: Gamepad2, text: "Premium Setups" },
+  { icon: Wifi, text: "Live Tracking" },
 ];
 
 export function HeroArena() {
   return (
-    <section className="relative isolate overflow-hidden">
-
-      {/* ── Scanline texture overlay ── */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.025]"
-        style={{
-          backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 4px)",
-        }}
-      />
-
-      {/* ── Background ── */}
+    <section className="relative isolate overflow-hidden bg-grid-pattern">
+      {/* Background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[#030508]" />
 
-        {/* Blue bloom top-left */}
+        {/* Blue glow top-left */}
         <div
-          className="absolute -left-60 -top-60 h-[900px] w-[900px] rounded-full"
+          className="absolute -left-40 -top-40 h-[700px] w-[700px] rounded-full"
           style={{
-            background: "radial-gradient(circle, rgba(160,12,20,0.28) 0%, transparent 65%)",
-            filter: "blur(70px)",
+            background: "radial-gradient(circle, rgba(0,102,255,0.2) 0%, transparent 65%)",
+            filter: "blur(80px)",
           }}
         />
 
-        {/* Cyan streak right */}
+        {/* Red glow bottom-right */}
         <div
-          className="absolute -right-20 top-0 h-full w-[500px]"
+          className="absolute -bottom-40 -right-40 h-[600px] w-[600px] rounded-full"
           style={{
-            background: "linear-gradient(180deg, rgba(255,45,63,0.08) 0%, transparent 60%)",
+            background: "radial-gradient(circle, rgba(255,0,51,0.15) 0%, transparent 65%)",
+            filter: "blur(80px)",
+          }}
+        />
+
+        {/* Cyan accent top-right */}
+        <div
+          className="absolute -right-20 top-0 h-[500px] w-[400px]"
+          style={{
+            background: "linear-gradient(180deg, rgba(0,212,255,0.06) 0%, transparent 60%)",
             filter: "blur(40px)",
           }}
         />
@@ -57,11 +58,10 @@ export function HeroArena() {
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#030508] to-transparent" />
       </div>
 
-      {/* ── Top accent line ── */}
       <div className="container pb-16 pt-28 lg:py-28">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)]">
 
-          {/* ══ LEFT ══ */}
+          {/* LEFT */}
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
@@ -69,9 +69,9 @@ export function HeroArena() {
             className="min-w-0"
           >
             {/* Live pill */}
-            <div className="mb-6 flex w-full items-center justify-center gap-2 rounded-full border border-[#ff2d3f]/30 bg-[#ff2d3f]/8 px-3 py-2 lg:inline-flex lg:w-auto lg:justify-start lg:px-4 lg:py-1.5">
+            <div className="mb-6 flex w-full items-center justify-center gap-2 rounded-full border border-[#0066ff]/30 bg-[#0066ff]/8 px-3 py-2 lg:inline-flex lg:w-auto lg:justify-start lg:px-4 lg:py-1.5">
               <span className="status-dot" />
-              <span className="whitespace-nowrap font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#ff2d3f] min-[390px]:text-[0.68rem] lg:text-[0.68rem] lg:tracking-[0.18em]">
+              <span className="whitespace-nowrap font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#00d4ff] min-[390px]:text-[0.68rem] lg:text-[0.68rem] lg:tracking-[0.18em]">
                 PS5 - PS4 - Racing Wheel - Live
               </span>
             </div>
@@ -81,15 +81,21 @@ export function HeroArena() {
               <BrandName className="brand-name-hero" />
             </h1>
 
+            {/* Sub heading */}
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-white/50 lg:text-lg">
+              Premium gaming lounge with real-time booking, live session tracking, and instant payments. 
+              Your next gaming session is one click away.
+            </p>
+
             {/* Trust badges */}
-            <div className="mt-7 grid grid-cols-2 gap-2.5 lg:flex lg:flex-wrap">
+            <div className="mt-7 grid grid-cols-3 gap-2.5 lg:flex lg:flex-wrap">
               {TRUST_BADGES.map(({ icon: Icon, text }) => (
                 <div
                   key={text}
-                  className="flex min-h-14 items-center justify-center gap-2 rounded-lg border border-[#ff2d3f]/22 bg-[#7d0007]/14 px-3 py-2 text-center lg:min-h-0 lg:justify-start lg:px-3.5"
+                  className="flex min-h-14 items-center justify-center gap-2 rounded-lg border border-[#0066ff]/20 bg-[#0066ff]/8 px-3 py-2 text-center lg:min-h-0 lg:justify-start lg:px-3.5"
                 >
-                  <Icon className="size-3.5 text-[#ff2d3f]" />
-                  <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-[#ff2d3f] min-[390px]:text-[0.68rem] lg:tracking-wider">
+                  <Icon className="size-3.5 text-[#00d4ff]" />
+                  <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-[#00d4ff] min-[390px]:text-[0.68rem] lg:tracking-wider">
                     {text}
                   </span>
                 </div>
@@ -101,7 +107,7 @@ export function HeroArena() {
               <Button
                 asChild
                 size="lg"
-                className="h-14 w-full justify-center gap-2 font-display text-sm font-bold uppercase tracking-wider shadow-neon lg:h-11 lg:w-auto"
+                className="h-14 w-full justify-center gap-2 font-display text-sm font-bold uppercase tracking-wider shadow-neon lg:h-12 lg:w-auto bg-gradient-to-r from-[#0066ff] to-[#0044cc] hover:from-[#0077ff] hover:to-[#0055dd] border-0"
               >
                 <Link href="/booking">
                   Book a Setup
@@ -112,7 +118,7 @@ export function HeroArena() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-14 w-full justify-center gap-2 font-display text-sm font-bold uppercase tracking-wider lg:h-11 lg:w-auto"
+                className="h-14 w-full justify-center gap-2 font-display text-sm font-bold uppercase tracking-wider border-[#0066ff]/30 hover:bg-[#0066ff]/10 hover:border-[#0066ff]/50 lg:h-12 lg:w-auto"
               >
                 <Link href="/availability">
                   <Gamepad2 className="size-4" />
@@ -126,13 +132,7 @@ export function HeroArena() {
               {STATS.map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex min-w-0 flex-col gap-1 lg:min-w-fit">
                   <span
-                    className="font-display text-[clamp(1.9rem,9vw,3rem)] font-black lg:text-3xl"
-                    style={{
-                      background: "linear-gradient(90deg, #ffffff 0%, #ff2d3f 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
+                    className="font-display text-[clamp(1.9rem,9vw,3rem)] font-black lg:text-3xl stat-number"
                   >
                     {value}
                   </span>
@@ -145,7 +145,7 @@ export function HeroArena() {
             </div>
           </motion.div>
 
-          {/* ══ RIGHT — Live card ══ */}
+          {/* RIGHT — Live card */}
           <motion.div
             initial={{ opacity: 0, x: 32 }}
             animate={{ opacity: 1, x: 0 }}
@@ -154,31 +154,31 @@ export function HeroArena() {
           >
             {/* Glow behind card */}
             <div
-              className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl opacity-35"
+              className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl opacity-30"
               style={{
-                background: "radial-gradient(ellipse at 50% 40%, #ff2d3f 0%, transparent 70%)",
-                filter: "blur(55px)",
+                background: "radial-gradient(ellipse at 50% 40%, #0066ff 0%, transparent 70%)",
+                filter: "blur(60px)",
               }}
             />
 
             {/* Corner brackets */}
-            <div className="pointer-events-none absolute -left-px -top-px h-8 w-8 rounded-tl-2xl border-l-2 border-t-2 border-[#ff2d3f]/55" />
-            <div className="pointer-events-none absolute -bottom-px -right-px h-8 w-8 rounded-br-2xl border-b-2 border-r-2 border-[#ff2d3f]/55" />
+            <div className="pointer-events-none absolute -left-px -top-px h-10 w-10 rounded-tl-2xl border-l-2 border-t-2 border-[#0066ff]/50" />
+            <div className="pointer-events-none absolute -bottom-px -right-px h-10 w-10 rounded-br-2xl border-b-2 border-r-2 border-[#ff0033]/50" />
 
             {/* Card */}
-            <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#050d18]/90 shadow-[0_40px_100px_rgba(0,0,0,0.75)] backdrop-blur-2xl">
+            <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#040810]/95 shadow-[0_40px_100px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
               {/* Top shimmer */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#ff2d3f]/70 to-transparent" />
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0066ff]/70 to-transparent" />
 
               {/* Card header */}
               <div className="flex items-center justify-between border-b border-white/[0.05] px-5 py-3.5">
                 <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#ff2d3f] shadow-[0_0_6px_#ff2d3f]" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#00d4ff] shadow-[0_0_6px_#00d4ff]" />
                   <span className="font-mono text-[0.64rem] font-bold uppercase tracking-[0.18em] text-white/38">
                     Live Lounge Pulse
                   </span>
                 </div>
-                <span className="flex items-center gap-1.5 rounded-full border border-[#2bff88]/20 bg-[#2bff88]/8 px-2.5 py-0.5 font-mono text-[0.62rem] font-bold uppercase tracking-wider text-[#2bff88]">
+                <span className="flex items-center gap-1.5 rounded-full border border-[#00ff88]/20 bg-[#00ff88]/8 px-2.5 py-0.5 font-mono text-[0.62rem] font-bold uppercase tracking-wider text-[#00ff88]">
                   <span className="status-dot" />
                   Live
                 </span>
