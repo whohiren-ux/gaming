@@ -135,7 +135,7 @@ export function PricingCards({ pricing }: { pricing: Pricing }) {
         </Button>
       </div>
       <div className="grid gap-6 md:grid-cols-3">
-        {pricing.map((item) => (
+        {pricing.map((item, index) => (
           <div
             key={item.type}
             className={`group gaming-card rounded-xl p-6 ${index === 1 ? 'border-[#0066ff]/30 shadow-[0_0_30px_rgba(0,102,255,0.1)]' : ''}`}
