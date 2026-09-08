@@ -11,6 +11,7 @@ build
 # env
 .env
 .env*.local
+.env.production
 
 # logs
 *.log
@@ -25,3 +26,9 @@ prisma/dev.db
 # system
 .DS_Store
 Thumbs.db
+
+# typescript
+tsconfig.tsbuildinfo
+
+# debug
+next-dev-*.log

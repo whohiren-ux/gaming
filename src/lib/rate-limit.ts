@@ -7,16 +7,32 @@ type Bucket = {
 
 const buckets = new Map<string, Bucket>();
 
+const CLEANUP_INTERVAL_MS = 60_000;
+let lastCleanup = Date.now();
+
+function cleanupExpiredBuckets() {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
+  lastCleanup = now;
+  for (const [key, bucket] of buckets) {
+    if (bucket.resetAt < now) {
+      buckets.delete(key);
+    }
+  }
+}
+
 export function getClientIp(request: NextRequest) {
-  return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip") ||
-    "127.0.0.1"
-  );
+  const forwarded = request.headers.get("x-forwarded-for");
+  const realIp = request.headers.get("x-real-ip");
+  const ip = forwarded?.split(",")[0]?.trim() || realIp || "127.0.0.1";
+  return ip.replace(/[^a-zA-Z0-9.:]/g, "").slice(0, 45);
 }
 
 export function rateLimit(request: NextRequest, key: string, limit = 30, windowMs = 60_000) {
-  const bucketKey = `${key}:${getClientIp(request)}`;
+  cleanupExpiredBuckets();
+
+  const ip = getClientIp(request);
+  const bucketKey = `${key}:${ip}`;
   const now = Date.now();
   const current = buckets.get(bucketKey);
 

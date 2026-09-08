@@ -1,7 +1,9 @@
+import crypto from "crypto";
+
 import { Prisma, type BookingStatus, type PaymentMethod, type PrismaClient, type Setup, type SetupType } from "@prisma/client";
 
 import { BOOKING_HOLD_MINUTES, BOOKING_TOKEN_MINIMUM_INR, getSetupDisplayName } from "@/lib/constants";
-import { addMinutesSafe, formatClock } from "@/lib/dates";
+import { addMinutesSafe, formatDateTime } from "@/lib/dates";
 import { getActiveMembershipDiscountForUser } from "@/lib/membership-service";
 import { calculateSessionAmount, toDecimal, toNumber } from "@/lib/money";
 import { createNotification } from "@/lib/notification-service";
@@ -14,9 +16,17 @@ type DbClient = PrismaClient | Prisma.TransactionClient;
 
 const blockingBookingStatuses: BookingStatus[] = ["PENDING", "CONFIRMED"];
 
+type BookingConfirmationNotificationInput = {
+  id: string;
+  customerId: string;
+  reference: string;
+  startTime: Date;
+  setup: Parameters<typeof getSetupDisplayName>[0];
+};
+
 function createBookingReference() {
   const stamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).slice(2, 6).toUpperCase();
+  const random = crypto.randomBytes(4).toString("hex").toUpperCase();
   return `NNX-${stamp}-${random}`;
 }
 
@@ -123,6 +133,7 @@ export async function findAvailableSetupForWindow(
     endTime: Date;
     preferredSetupId?: string;
     ignoreBookingId?: string;
+    ignoreSessionId?: string;
   }
 ) {
   const candidates = await client.setup.findMany({
@@ -132,17 +143,48 @@ export async function findAvailableSetupForWindow(
     orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }]
   });
 
-  for (const setup of candidates) {
-    const conflicts = await getSetupConflictCount(
-      client,
-      setup.id,
-      input.startTime,
-      input.endTime,
-      setup.bufferMinutes,
-      { ignoreBookingId: input.ignoreBookingId }
-    );
+  if (candidates.length === 0) {
+    throw new Error("No setup is available for the requested time window.");
+  }
 
-    if (conflicts === 0) {
+  const setupIds = candidates.map((s) => s.id);
+  const maxBuffer = Math.max(...candidates.map((s) => s.bufferMinutes));
+  const bufferedStart = addMinutesSafe(input.startTime, -maxBuffer);
+  const bufferedEnd = addMinutesSafe(input.endTime, maxBuffer);
+
+  const [bookingCounts, sessionCounts] = await Promise.all([
+    client.booking.groupBy({
+      by: ["setupId"],
+      where: {
+        setupId: { in: setupIds },
+        id: input.ignoreBookingId ? { not: input.ignoreBookingId } : undefined,
+        status: { in: blockingBookingStatuses },
+        startTime: { lt: bufferedEnd },
+        endTime: { gt: bufferedStart }
+      },
+      _count: { id: true }
+    }),
+    client.setupSession.groupBy({
+      by: ["setupId"],
+      where: {
+        setupId: { in: setupIds },
+        id: input.ignoreSessionId ? { not: input.ignoreSessionId } : undefined,
+        status: { in: ["ACTIVE", "PAUSED", "EXPIRED"] },
+        startedAt: { lt: bufferedEnd },
+        endsAt: { gt: bufferedStart }
+      },
+      _count: { id: true }
+    })
+  ]);
+
+  const bookingCountMap = new Map(bookingCounts.map((b) => [b.setupId, b._count.id]));
+  const sessionCountMap = new Map(sessionCounts.map((s) => [s.setupId, s._count.id]));
+
+  for (const setup of candidates) {
+    const bookingCount = bookingCountMap.get(setup.id) ?? 0;
+    const sessionCount = sessionCountMap.get(setup.id) ?? 0;
+
+    if (bookingCount + sessionCount === 0) {
       return setup;
     }
   }
@@ -241,73 +283,111 @@ export async function confirmBookingPayment(
   amountPaid: number,
   paymentMode: PaymentMethod
 ) {
-  const booking = await prisma.booking.findUniqueOrThrow({
-    where: { id: bookingId },
-    include: { setup: true, customer: true }
-  });
+  const updated = await prisma.$transaction(
+    async (tx) => {
+      const booking = await tx.booking.findUniqueOrThrow({
+        where: { id: bookingId },
+        include: { setup: true, customer: true }
+      });
 
-  const paidAmount = toNumber(booking.paidAmount) + amountPaid;
-  const total = toNumber(booking.priceTotal);
-  const token = toNumber(booking.tokenAmount);
-  const paymentStatus = paidAmount >= total ? "PAID" : paidAmount > 0 ? "PARTIAL" : "PENDING";
-  const status = paidAmount >= token ? "CONFIRMED" : booking.status;
+      const paidAmount = toNumber(booking.paidAmount) + amountPaid;
+      const total = toNumber(booking.priceTotal);
+      const token = toNumber(booking.tokenAmount);
+      const paymentStatus = paidAmount >= total ? "PAID" : paidAmount > 0 ? "PARTIAL" : "PENDING";
+      const status = paidAmount >= token ? "CONFIRMED" : booking.status;
 
-  const updated = await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
-      paidAmount: toDecimal(paidAmount),
-      paymentStatus,
-      paymentMode,
-      status
+      const result = await tx.booking.update({
+        where: { id: bookingId },
+        data: {
+          paidAmount: toDecimal(paidAmount),
+          paymentStatus,
+          paymentMode,
+          status
+        },
+        include: { setup: true, customer: true }
+      });
+
+      return { booking, result, wasJustConfirmed: booking.status !== "CONFIRMED" && status === "CONFIRMED" };
     },
-    include: { setup: true, customer: true }
-  });
+    {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable
+    }
+  );
 
-  if (status === "CONFIRMED") {
-    await createNotification({
-      userId: updated.customerId,
-      type: "BOOKING_CONFIRMATION",
-      title: "Booking confirmed",
-      message: `${getSetupDisplayName(updated.setup)} is confirmed for ${formatClock(updated.startTime)}.`,
-      metadata: {
-        bookingId: updated.id,
-        reference: updated.reference
-      }
-    });
+  if (updated.wasJustConfirmed) {
+    await createBookingConfirmationNotification(updated.result);
   }
 
   await publishRealtime(REALTIME_CHANNELS.availability, REALTIME_EVENTS.bookingChanged, {
-    bookingId: updated.id,
-    setupId: updated.setupId,
-    status: updated.status
+    bookingId: updated.result.id,
+    setupId: updated.result.setupId,
+    status: updated.result.status
   });
 
   await publishRealtime(REALTIME_CHANNELS.admin, REALTIME_EVENTS.paymentChanged, {
-    bookingId: updated.id,
-    paidAmount
+    bookingId: updated.result.id,
+    paidAmount: amountPaid
   });
 
-  return updated;
+  return updated.result;
+}
+
+export async function createBookingConfirmationNotification(
+  booking: BookingConfirmationNotificationInput
+) {
+  await createNotification({
+    userId: booking.customerId,
+    type: "BOOKING_CONFIRMATION",
+    title: "Booking confirmed",
+    message: `${getSetupDisplayName(booking.setup)} is confirmed for ${formatDateTime(booking.startTime)}.`,
+    metadata: {
+      bookingId: booking.id,
+      reference: booking.reference
+    }
+  });
 }
 
 export async function cancelBooking(bookingId: string, actorUserId: string, reason?: string) {
-  const booking = await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
-      status: "CANCELLED",
-      notes: reason
-    },
-    include: {
-      customer: true,
-      setup: true
+  const booking = await prisma.$transaction(async (tx) => {
+    const existing = await tx.booking.findUniqueOrThrow({
+      where: { id: bookingId },
+      include: { customer: true, setup: true, payments: true }
+    });
+
+    const paidAmount = toNumber(existing.paidAmount);
+    const updated = await tx.booking.update({
+      where: { id: bookingId },
+      data: {
+        status: "CANCELLED",
+        notes: reason
+      },
+      include: {
+        customer: true,
+        setup: true
+      }
+    });
+
+    if (paidAmount > 0) {
+      const { createLedgerPayment } = await import("@/lib/payment-service");
+      await createLedgerPayment(tx, {
+        bookingId,
+        userId: existing.customerId,
+        amount: paidAmount,
+        method: existing.paymentMode ?? "RAZORPAY",
+        type: "REFUND",
+        status: "PAID",
+        lineItemName: "Booking cancellation refund"
+      });
     }
+
+    return { ...updated, paidAmount };
   });
 
   await createNotification({
     userId: booking.customerId,
     type: "SYSTEM",
     title: "Booking cancelled",
-    message: `${booking.reference} for ${getSetupDisplayName(booking.setup)} was cancelled.`,
+    message: `${booking.reference} for ${getSetupDisplayName(booking.setup)} was cancelled.${booking.paidAmount > 0 ? " A refund has been processed." : ""}`,
     metadata: {
       bookingId,
       actorUserId,
@@ -329,11 +409,14 @@ export async function listBookings(input: {
   isAdmin?: boolean;
   status?: BookingStatus;
   take?: number;
+  cursor?: string;
 }) {
+  const take = Math.min(input.take ?? 50, 100);
   return prisma.booking.findMany({
     where: {
       ...(input.isAdmin ? {} : { customerId: input.userId }),
-      ...(input.status ? { status: input.status } : {})
+      ...(input.status ? { status: input.status } : {}),
+      ...(input.cursor ? { createdAt: { lt: new Date(input.cursor) } } : {})
     },
     include: {
       setup: true,
@@ -348,6 +431,9 @@ export async function listBookings(input: {
       payments: true
     },
     orderBy: { startTime: "desc" },
-    take: input.take ?? 100
-  });
+    take: take + 1
+  }).then((bookings) => ({
+    items: bookings.slice(0, take),
+    nextCursor: bookings.length > take ? bookings[take].createdAt.toISOString() : null
+  }));
 }

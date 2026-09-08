@@ -6,6 +6,7 @@ import { formatClock, minutesFromNow } from "@/lib/dates";
 import { toNumber } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
 import { releaseStalePendingBookings } from "@/lib/booking-service";
+import { expireOverdueMemberships } from "@/lib/membership-service";
 import type { AvailabilitySetup } from "@/types";
 
 function displayStatus(input: {
@@ -35,9 +36,12 @@ function displayStatus(input: {
 }
 
 export async function getLiveAvailability(): Promise<AvailabilitySetup[]> {
-  await releaseStalePendingBookings();
-  await expireOverdueSessions();
-  await emitEndingSoonAlerts();
+  await Promise.all([
+    releaseStalePendingBookings(),
+    expireOverdueSessions(),
+    emitEndingSoonAlerts(),
+    expireOverdueMemberships()
+  ]);
 
   const now = new Date();
   const setups = await prisma.setup.findMany({

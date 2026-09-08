@@ -12,13 +12,17 @@ export async function GET(request: NextRequest) {
     const session = await auth();
     const user = assertAuthenticated(session);
     const status = request.nextUrl.searchParams.get("status") || undefined;
-    const bookings = await listBookings({
+    const take = request.nextUrl.searchParams.get("take") || undefined;
+    const cursor = request.nextUrl.searchParams.get("cursor") || undefined;
+    const result = await listBookings({
       userId: user.id,
       isAdmin: isAdminRole(user.role),
-      status: status as never
+      status: status as never,
+      take: take ? parseInt(take, 10) : undefined,
+      cursor: cursor || undefined
     });
 
-    return ok({ bookings });
+    return ok(result);
   } catch (error) {
     return apiError(error);
   }

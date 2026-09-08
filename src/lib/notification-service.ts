@@ -2,7 +2,7 @@ import { Prisma, type NotificationChannel, type NotificationType } from "@prisma
 
 import { prisma } from "@/lib/prisma";
 import { publishRealtime } from "@/lib/realtime";
-import { REALTIME_CHANNELS, REALTIME_EVENTS } from "@/lib/realtime-events";
+import { getNotificationChannel, REALTIME_CHANNELS, REALTIME_EVENTS } from "@/lib/realtime-events";
 
 type CreateNotificationInput = {
   userId?: string | null;
@@ -25,7 +25,7 @@ export async function createNotification(input: CreateNotificationInput) {
     }
   });
 
-  await publishRealtime(REALTIME_CHANNELS.notifications, REALTIME_EVENTS.notificationCreated, {
+  await publishRealtime(getNotificationChannel(input.userId), REALTIME_EVENTS.notificationCreated, {
     notification
   });
 
