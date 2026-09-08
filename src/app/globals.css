@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap");
 @import "tailwindcss";
 
 @config "../../tailwind.config.ts";
@@ -10,7 +10,7 @@
 @theme {
   --font-sans: "Exo 2", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Rajdhani", ui-sans-serif, system-ui, sans-serif;
-  --font-brand: "Cinzel Decorative", "Times New Roman", serif;
+  --font-brand: "Cinzel", "Times New Roman", serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   --color-background: hsl(var(--background));
@@ -358,7 +358,7 @@ body::before {
     color: #f4f4f6;
     font-family: var(--font-brand);
     font-weight: 900;
-    letter-spacing: 0;
+    letter-spacing: 0.12em;
     line-height: 0.94;
     text-transform: uppercase;
     filter: drop-shadow(0 0 12px rgb(255 255 255 / 0.16)) drop-shadow(0 0 20px rgb(160 12 20 / 0.2));
