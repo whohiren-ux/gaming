@@ -12,18 +12,6 @@ function dayBounds(date: Date) {
   return { start, end };
 }
 
-async function sumPaidPayments(start: Date, end: Date) {
-  const result = await prisma.payment.aggregate({
-    where: {
-      status: "PAID",
-      createdAt: { gte: start, lt: end }
-    },
-    _sum: { amount: true }
-  });
-
-  return toNumber(result._sum.amount);
-}
-
 export async function getDashboardSummary(): Promise<DashboardSummary> {
   const now = new Date();
   const today = dayBounds(now);
@@ -37,13 +25,23 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     weeklyEarnings,
     monthlyEarnings,
     activeSessions,
-    allRecentSessions
+    allRecentSessions,
+    revenueTrendData
   ] = await Promise.all([
     prisma.setup.count(),
     prisma.setup.count({ where: { status: { in: ["ACTIVE", "EXPIRED"] } } }),
-    sumPaidPayments(today.start, today.end),
-    sumPaidPayments(weekStart, today.end),
-    sumPaidPayments(monthStart, today.end),
+    prisma.payment.aggregate({
+      where: { status: "PAID", createdAt: { gte: today.start, lt: today.end } },
+      _sum: { amount: true }
+    }).then(r => toNumber(r._sum.amount)),
+    prisma.payment.aggregate({
+      where: { status: "PAID", createdAt: { gte: weekStart, lt: today.end } },
+      _sum: { amount: true }
+    }).then(r => toNumber(r._sum.amount)),
+    prisma.payment.aggregate({
+      where: { status: "PAID", createdAt: { gte: monthStart, lt: today.end } },
+      _sum: { amount: true }
+    }).then(r => toNumber(r._sum.amount)),
     prisma.setupSession.findMany({
       where: { status: { in: ["ACTIVE", "PAUSED", "EXPIRED"] } },
       include: {
@@ -58,7 +56,46 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
         status: { in: ["ACTIVE", "PAUSED", "COMPLETED", "EXPIRED"] }
       },
       include: { setup: true }
-    })
+    }),
+    (async () => {
+      const dates = dateRangeDays(14);
+      const bounds = dates.map(d => dayBounds(d));
+      const [payments, bookings] = await Promise.all([
+        prisma.payment.groupBy({
+          by: ["createdAt"],
+          where: {
+            status: "PAID",
+            createdAt: { gte: bounds[0].start, lt: bounds[bounds.length - 1].end }
+          },
+          _sum: { amount: true },
+          _count: { id: true }
+        }),
+        prisma.booking.groupBy({
+          by: ["createdAt"],
+          where: {
+            createdAt: { gte: bounds[0].start, lt: bounds[bounds.length - 1].end }
+          },
+          _count: { id: true }
+        })
+      ]);
+
+      const paymentByDay = new Map<string, number>();
+      for (const p of payments) {
+        const day = format(p.createdAt, "yyyy-MM-dd");
+        paymentByDay.set(day, (paymentByDay.get(day) ?? 0) + toNumber(p._sum.amount));
+      }
+      const bookingByDay = new Map<string, number>();
+      for (const b of bookings) {
+        const day = format(b.createdAt, "yyyy-MM-dd");
+        bookingByDay.set(day, (bookingByDay.get(day) ?? 0) + b._count.id);
+      }
+
+      return dates.map(date => ({
+        date: format(date, "dd MMM"),
+        revenue: paymentByDay.get(format(date, "yyyy-MM-dd")) ?? 0,
+        bookings: bookingByDay.get(format(date, "yyyy-MM-dd")) ?? 0
+      }));
+    })()
   ]);
 
   const freeSetups = Math.max(0, totalSetups - activeSetups);
@@ -71,24 +108,6 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
   }
   const peakUsageHour =
     [...hourBuckets.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
-
-  const revenueTrend = await Promise.all(
-    dateRangeDays(14).map(async (date) => {
-      const bounds = dayBounds(date);
-      const [revenue, bookings] = await Promise.all([
-        sumPaidPayments(bounds.start, bounds.end),
-        prisma.booking.count({
-          where: { createdAt: { gte: bounds.start, lt: bounds.end } }
-        })
-      ]);
-
-      return {
-        date: format(date, "dd MMM"),
-        revenue,
-        bookings
-      };
-    })
-  );
 
   const occupancyTrend = dateRangeDays(14).map((date) => {
     const daySessions = allRecentSessions.filter(
@@ -137,7 +156,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       remainingMinutes: Math.max(0, Math.ceil((session.endsAt.getTime() - now.getTime()) / 60_000)),
       currentAmount: toNumber(session.billedAmount)
     })),
-    revenueTrend,
+    revenueTrend: await revenueTrendData,
     occupancyTrend,
     setupUsage: [...setupUsageMap.values()].sort((a, b) => b.minutes - a.minutes).slice(0, 8)
   };

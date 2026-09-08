@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { apiError, ok } from "@/lib/api";
 import { assertAuthenticated } from "@/lib/access-control";
 import { prisma } from "@/lib/prisma";
+import { createRazorpayOrder } from "@/lib/payment-service";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -33,6 +34,8 @@ export async function POST(request: NextRequest, { params }: Params) {
       throw new Error("Tournament is full.");
     }
 
+    const isFree = Number(tournament.entryFee) === 0;
+
     const registration = await prisma.tournamentRegistration.upsert({
       where: {
         tournamentId_userId: {
@@ -47,11 +50,26 @@ export async function POST(request: NextRequest, { params }: Params) {
         tournamentId: id,
         userId: user.id,
         gamerTag: input.gamerTag,
-        paid: Number(tournament.entryFee) === 0
+        paid: isFree
       }
     });
 
-    return ok({ registration }, { status: 201 });
+    let paymentOrder = null;
+    if (!isFree) {
+      const { order } = await createRazorpayOrder({
+        userId: user.id,
+        amount: Number(tournament.entryFee),
+        paymentType: "FULL"
+      });
+      paymentOrder = {
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
+      };
+    }
+
+    return ok({ registration, paymentOrder }, { status: 201 });
   } catch (error) {
     return apiError(error);
   }

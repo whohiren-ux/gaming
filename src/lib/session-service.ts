@@ -3,6 +3,8 @@ import { Prisma, type PaymentMethod } from "@prisma/client";
 import { SESSION_ENDING_ALERT_MINUTES, getSetupDisplayName } from "@/lib/constants";
 import { addMinutesSafe, minutesBetween } from "@/lib/dates";
 import { assertSetupWindowAvailable } from "@/lib/booking-service";
+import { sanitizeInput } from "@/lib/input-sanitize";
+import { deductMembershipMinutes } from "@/lib/membership-service";
 import { calculateSessionAmount, toDecimal, toNumber } from "@/lib/money";
 import { createNotification } from "@/lib/notification-service";
 import { createLedgerPayment } from "@/lib/payment-service";
@@ -366,7 +368,7 @@ export async function endSession(
     forceExpired?: boolean;
   }
 ) {
-  const session = await prisma.$transaction(async (tx) => {
+  const { session: updatedSession, billableMinutes } = await prisma.$transaction(async (tx) => {
     const existing = await tx.setupSession.findUniqueOrThrow({
       where: { id: sessionId },
       include: { setup: true, booking: true }
@@ -399,7 +401,7 @@ export async function endSession(
         totalPausedSeconds: existing.totalPausedSeconds + currentPauseSeconds,
         billedAmount,
         paidAmount: paidAmount > 0 ? { increment: toDecimal(paidAmount) } : undefined,
-        notes: input.notes ? `${existing.notes ?? ""}\n${input.notes}`.trim() : existing.notes
+        notes: input.notes ? sanitizeInput(input.notes) : existing.notes
       },
       include: {
         setup: true,
@@ -438,11 +440,15 @@ export async function endSession(
 
     await setSetupPostSessionStatus(tx, existing.setupId);
 
-    return updated;
+    return { session: updated, billableMinutes };
   });
 
-  await publishSessionChange(session.id, session.setupId);
-  return session;
+  if (updatedSession.customerId && billableMinutes > 0) {
+    await deductMembershipMinutes(updatedSession.customerId, billableMinutes);
+  }
+
+  await publishSessionChange(updatedSession.id, updatedSession.setupId);
+  return updatedSession;
 }
 
 export async function forceStopSession(sessionId: string, actorUserId: string, notes?: string) {
@@ -454,7 +460,7 @@ export async function forceStopSession(sessionId: string, actorUserId: string, n
         status: "CANCELLED",
         endedAt: new Date(),
         endedById: actorUserId,
-        notes: notes ? `${existing.notes ?? ""}\nForce stop: ${notes}`.trim() : existing.notes
+        notes: notes ? `${existing.notes ?? ""}\nForce stop: ${sanitizeInput(notes)}`.trim() : existing.notes
       },
       include: { setup: true, customer: true }
     });
@@ -519,7 +525,7 @@ export async function addSessionNote(sessionId: string, notes: string) {
   const session = await prisma.setupSession.update({
     where: { id: sessionId },
     data: {
-      notes: `${existing.notes ?? ""}\n${notes}`.trim()
+      notes: `${existing.notes ?? ""}\n${sanitizeInput(notes)}`.trim()
     },
     include: { setup: true, customer: true }
   });

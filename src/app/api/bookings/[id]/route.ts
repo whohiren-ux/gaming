@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { apiError, ok } from "@/lib/api";
 import { assertAuthenticated, assertRole, isAdminRole } from "@/lib/access-control";
-import { cancelBooking } from "@/lib/booking-service";
+import { cancelBooking, createBookingConfirmationNotification } from "@/lib/booking-service";
 import { prisma } from "@/lib/prisma";
 import { publishRealtime } from "@/lib/realtime";
 import { REALTIME_CHANNELS, REALTIME_EVENTS } from "@/lib/realtime-events";
@@ -50,11 +50,20 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
     assertRole(session, ["ADMIN", "STAFF"]);
 
+    const existing = await prisma.booking.findUniqueOrThrow({
+      where: { id },
+      select: { status: true }
+    });
+
     const booking = await prisma.booking.update({
       where: { id },
       data: input,
       include: { setup: true, customer: true }
     });
+
+    if (existing.status !== "CONFIRMED" && input.status === "CONFIRMED") {
+      await createBookingConfirmationNotification(booking);
+    }
 
     await publishRealtime(REALTIME_CHANNELS.availability, REALTIME_EVENTS.bookingChanged, {
       bookingId: booking.id,

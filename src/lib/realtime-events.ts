@@ -12,3 +12,7 @@ export const REALTIME_EVENTS = {
   notificationCreated: "notification:created",
   analyticsChanged: "analytics:changed"
 } as const;
+
+export function getNotificationChannel(userId?: string | null) {
+  return userId ? `${REALTIME_CHANNELS.notifications}-${userId}` : REALTIME_CHANNELS.notifications;
+}

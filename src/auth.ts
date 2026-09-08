@@ -12,7 +12,8 @@ const credentialsSchema = z.object({
 
 export const authOptions: NextAuthOptions = {
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 60 * 60 * 8
   },
   pages: {
     signIn: "/login"
@@ -28,6 +29,7 @@ export const authOptions: NextAuthOptions = {
         const parsed = credentialsSchema.safeParse(rawCredentials);
 
         if (!parsed.success) {
+          console.warn("[AUTH] Login attempt with invalid credentials format");
           return null;
         }
 
@@ -36,12 +38,14 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user?.passwordHash) {
+          console.warn(`[AUTH] Login attempt for non-existent email: ${parsed.data.email}`);
           return null;
         }
 
         const isValid = await bcrypt.compare(parsed.data.password, user.passwordHash);
 
         if (!isValid) {
+          console.warn(`[AUTH] Failed login attempt for user: ${user.id}`);
           return null;
         }
 
@@ -62,6 +66,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = user.role;
         token.phone = user.phone;
+        token.v = 1;
       }
 
       return token;

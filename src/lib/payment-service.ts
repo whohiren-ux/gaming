@@ -16,7 +16,7 @@ type DbClient = PrismaClient | Prisma.TransactionClient;
 
 export function createInvoiceNumber(prefix = "NNX") {
   const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
-  const random = Math.random().toString(36).slice(2, 7).toUpperCase();
+  const random = crypto.randomBytes(4).toString("hex").toUpperCase();
   return `${prefix}-INV-${stamp}-${random}`;
 }
 
@@ -259,20 +259,14 @@ export async function confirmRazorpayCheckoutPayment(input: {
 }
 
 export async function handleRazorpayWebhook(rawBody: string) {
-  const event = JSON.parse(rawBody) as {
-    event: string;
-    payload?: {
-      payment?: {
-        entity?: {
-          id: string;
-          order_id: string;
-          amount: number;
-          status: string;
-          captured: boolean;
-        };
-      };
-    };
-  };
+  let event: { event: string; payload?: { payment?: { entity?: { id: string; order_id: string; amount: number; status: string; captured: boolean } } } };
+
+  try {
+    event = JSON.parse(rawBody) as typeof event;
+  } catch {
+    console.error("[WEBHOOK] Failed to parse Razorpay webhook body");
+    return { handled: false };
+  }
 
   const entity = event.payload?.payment?.entity;
 
@@ -287,6 +281,10 @@ export async function handleRazorpayWebhook(rawBody: string) {
 
   if (!payment) {
     return { handled: false };
+  }
+
+  if (payment.status === "PAID") {
+    return { handled: true, reason: "already-processed" };
   }
 
   if (event.event === "payment.captured" || entity.captured) {

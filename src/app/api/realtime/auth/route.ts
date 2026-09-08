@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { apiError } from "@/lib/api";
 import { isAdminRole } from "@/lib/access-control";
 import { authorizePusherChannel } from "@/lib/realtime";
-import { REALTIME_CHANNELS } from "@/lib/realtime-events";
+import { getNotificationChannel, REALTIME_CHANNELS } from "@/lib/realtime-events";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,9 +21,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const isOwnNotificationChannel = channelName === getNotificationChannel(session.user.id);
+
     if (
       channelName !== REALTIME_CHANNELS.admin &&
-      channelName !== REALTIME_CHANNELS.notifications
+      channelName !== REALTIME_CHANNELS.notifications &&
+      !isOwnNotificationChannel
     ) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
