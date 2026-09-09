@@ -359,6 +359,7 @@ export async function createBookingConfirmationNotification(
   if (booking.customer.email) {
     const cafePhone = getOptionalEnv("CAFE_PHONE");
     try {
+      alert(booking.customer.email);
       await sendBookingConfirmationEmail({
         customerName: booking.customer.name ?? "Gamer",
         customerEmail: booking.customer.email,
