@@ -2,12 +2,20 @@
 
 import { auth } from "@/auth";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSetupDisplayName } from "@/lib/constants";
+import { formatDateTime } from "@/lib/dates";
 import { formatINR } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
+import { getOptionalEnv } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
+
+function buildWhatsAppUrl(phone: string, reference: string, setupName: string, startTime: Date) {
+  const msg = encodeURIComponent(`Hi! My booking *${reference}* for ${setupName} on ${formatDateTime(startTime)} is confirmed. Need any help?`);
+  return `https://wa.me/${phone.replace(/[^0-9]/g, "")}?text=${msg}`;
+}
 
 export default async function AccountPage() {
   const session = await auth();
@@ -15,6 +23,8 @@ export default async function AccountPage() {
   if (!session?.user?.id) {
     return null;
   }
+
+  const cafePhone = getOptionalEnv("CAFE_PHONE");
 
   const [bookings, memberships, notifications] = await Promise.all([
     prisma.booking.findMany({
@@ -52,6 +62,17 @@ export default async function AccountPage() {
                   <p className="mt-2 text-sm text-muted-foreground">
                     {getSetupDisplayName(booking.setup)} · {booking.startTime.toLocaleString()} · {formatINR(booking.priceTotal)}
                   </p>
+                  {cafePhone && booking.status === "CONFIRMED" && (
+                    <Button asChild size="sm" className="mt-3 bg-[#25d366] hover:bg-[#20ba5a] text-white">
+                      <a
+                        href={buildWhatsAppUrl(cafePhone, booking.reference, getSetupDisplayName(booking.setup), booking.startTime)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Chat on WhatsApp
+                      </a>
+                    </Button>
+                  )}
                 </div>
                 <img
                   src={`/api/bookings/${booking.id}/qr`}

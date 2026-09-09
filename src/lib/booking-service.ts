@@ -4,6 +4,8 @@ import { Prisma, type BookingStatus, type PaymentMethod, type PrismaClient, type
 
 import { BOOKING_HOLD_MINUTES, BOOKING_TOKEN_MINIMUM_INR, getSetupDisplayName } from "@/lib/constants";
 import { addMinutesSafe, formatDateTime } from "@/lib/dates";
+import { sendBookingConfirmationEmail } from "@/lib/email-service";
+import { getOptionalEnv } from "@/lib/env";
 import { getActiveMembershipDiscountForUser } from "@/lib/membership-service";
 import { calculateSessionAmount, toDecimal, toNumber } from "@/lib/money";
 import { createNotification } from "@/lib/notification-service";
@@ -21,7 +23,15 @@ type BookingConfirmationNotificationInput = {
   customerId: string;
   reference: string;
   startTime: Date;
+  endTime: Date;
+  durationMinutes: number;
+  priceTotal: number | string | Prisma.Decimal;
   setup: Parameters<typeof getSetupDisplayName>[0];
+  customer: {
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+  };
 };
 
 function createBookingReference() {
@@ -345,6 +355,22 @@ export async function createBookingConfirmationNotification(
       reference: booking.reference
     }
   });
+
+  if (booking.customer.email) {
+    const cafePhone = getOptionalEnv("CAFE_PHONE");
+    sendBookingConfirmationEmail({
+      customerName: booking.customer.name ?? "Gamer",
+      customerEmail: booking.customer.email,
+      customerPhone: booking.customer.phone,
+      reference: booking.reference,
+      setupName: getSetupDisplayName(booking.setup),
+      startTime: booking.startTime,
+      durationMinutes: booking.durationMinutes,
+      priceTotal: toNumber(booking.priceTotal),
+      qrUrl: absoluteUrl(`/booking?reference=${booking.reference}`),
+      cafePhone
+    }).catch((err) => console.error("[booking-service] Failed to send confirmation email:", err));
+  }
 }
 
 export async function cancelBooking(bookingId: string, actorUserId: string, reason?: string) {
