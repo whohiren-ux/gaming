@@ -3,6 +3,8 @@ import { Prisma, type PaymentMethod } from "@prisma/client";
 import { SESSION_ENDING_ALERT_MINUTES, getSetupDisplayName } from "@/lib/constants";
 import { addMinutesSafe, minutesBetween } from "@/lib/dates";
 import { assertSetupWindowAvailable } from "@/lib/booking-service";
+import { sendBookingConfirmationEmail } from "@/lib/email-service";
+import { getOptionalEnv } from "@/lib/env";
 import { sanitizeInput } from "@/lib/input-sanitize";
 import { deductMembershipMinutes } from "@/lib/membership-service";
 import { calculateSessionAmount, toDecimal, toNumber } from "@/lib/money";
@@ -11,6 +13,7 @@ import { createLedgerPayment } from "@/lib/payment-service";
 import { prisma } from "@/lib/prisma";
 import { publishRealtime } from "@/lib/realtime";
 import { REALTIME_CHANNELS, REALTIME_EVENTS } from "@/lib/realtime-events";
+import { absoluteUrl } from "@/lib/utils";
 
 async function setSetupPostSessionStatus(tx: Prisma.TransactionClient, setupId: string) {
   const setup = await tx.setup.findUniqueOrThrow({ where: { id: setupId } });
@@ -245,6 +248,33 @@ export async function startSession(input: {
   );
 
   await publishSessionChange(session.id, session.setupId);
+
+  if (session.booking) {
+    const customer = session.customer ?? (session.booking.customerId
+      ? await prisma.user.findUnique({ where: { id: session.booking.customerId } })
+      : null);
+
+    if (customer?.email) {
+      const cafePhone = getOptionalEnv("CAFE_PHONE");
+      try {
+        await sendBookingConfirmationEmail({
+          customerName: customer.name ?? "Gamer",
+          customerEmail: customer.email,
+          customerPhone: customer.phone,
+          reference: session.booking.reference,
+          setupName: getSetupDisplayName(session.setup),
+          startTime: session.booking.startTime,
+          durationMinutes: session.booking.durationMinutes,
+          priceTotal: toNumber(session.booking.priceTotal),
+          qrUrl: absoluteUrl(`/booking?reference=${session.booking.reference}`),
+          cafePhone
+        });
+        console.log(`[session-service] Confirmation email sent for booking ${session.booking.reference}`);
+      } catch (err) {
+        console.error("[session-service] Failed to send confirmation email:", err);
+      }
+    }
+  }
 
   return session;
 }

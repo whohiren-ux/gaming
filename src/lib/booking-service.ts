@@ -358,18 +358,25 @@ export async function createBookingConfirmationNotification(
 
   if (booking.customer.email) {
     const cafePhone = getOptionalEnv("CAFE_PHONE");
-    sendBookingConfirmationEmail({
-      customerName: booking.customer.name ?? "Gamer",
-      customerEmail: booking.customer.email,
-      customerPhone: booking.customer.phone,
-      reference: booking.reference,
-      setupName: getSetupDisplayName(booking.setup),
-      startTime: booking.startTime,
-      durationMinutes: booking.durationMinutes,
-      priceTotal: toNumber(booking.priceTotal),
-      qrUrl: absoluteUrl(`/booking?reference=${booking.reference}`),
-      cafePhone
-    }).catch((err) => console.error("[booking-service] Failed to send confirmation email:", err));
+    try {
+      await sendBookingConfirmationEmail({
+        customerName: booking.customer.name ?? "Gamer",
+        customerEmail: booking.customer.email,
+        customerPhone: booking.customer.phone,
+        reference: booking.reference,
+        setupName: getSetupDisplayName(booking.setup),
+        startTime: booking.startTime,
+        durationMinutes: booking.durationMinutes,
+        priceTotal: toNumber(booking.priceTotal),
+        qrUrl: absoluteUrl(`/booking?reference=${booking.reference}`),
+        cafePhone
+      });
+      console.log(`[booking-service] Confirmation email sent for booking ${booking.reference}`);
+    } catch (err) {
+      console.error("[booking-service] Failed to send confirmation email:", err);
+    }
+  } else {
+    console.warn(`[booking-service] No email for customer ${booking.customerId}, skipping email`);
   }
 }
 
