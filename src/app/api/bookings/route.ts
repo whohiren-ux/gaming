@@ -45,7 +45,6 @@ export async function POST(request: NextRequest) {
       setupType: input.setupType,
       startTime: input.startTime,
       durationMinutes: input.durationMinutes,
-      paymentIntent: input.paymentIntent,
       source: input.source,
       notes: input.notes
     });

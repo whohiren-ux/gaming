@@ -22,7 +22,7 @@ type SetupRow = {
   id: string;
   stationCode: string;
   name: string;
-  type: "PS5" | "PS4" | "GAMING_PC";
+  type: "PS5" | "STERING WHEEEL";
   hourlyPrice: number;
   status: string;
   floor: string;
@@ -114,7 +114,7 @@ export function SetupManager({ initialSetups }: { initialSetups: SetupRow[] }) {
       <Card className="xl:sticky xl:top-24 xl:self-start">
         <CardHeader>
           <CardTitle>New setup</CardTitle>
-          <p className="text-sm text-muted-foreground">Add PS5, PS4, or racing wheel stations with pricing and buffer rules.</p>
+          <p className="text-sm text-muted-foreground">Add PS5 or racing wheel stations with pricing and buffer rules.</p>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={createSetup}>
@@ -129,7 +129,6 @@ export function SetupManager({ initialSetups }: { initialSetups: SetupRow[] }) {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="PS5">PS5</SelectItem>
-                    <SelectItem value="PS4">PS4</SelectItem>
                     <SelectItem value="GAMING_PC">{SETUP_TYPE_LABELS.GAMING_PC}</SelectItem>
                   </SelectContent>
                 </Select>

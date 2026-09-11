@@ -1,6 +1,6 @@
 # HOUSE OF GAMERS OS
 
-Production-ready HOUSE OF GAMERS management web app for PS5, PS4, and racing wheel lounges.
+Production-ready HOUSE OF GAMERS management web app for PS5 and racing wheel lounges.
 
 ## Stack
 

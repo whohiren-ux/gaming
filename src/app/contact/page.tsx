@@ -18,17 +18,14 @@ export default function ContactPage() {
             <div>
               <p className="font-semibold text-white">Address</p>
               <p>
-                <BrandName className="brand-name-inline" />, Main Floor, Esports Lane
+                <BrandName className="brand-name-inline" />, 107, Avadh Square 1st Floor, Near shell pump, Green city, Jamnagar, 361006 
               </p>
             </div>
             <div>
               <p className="font-semibold text-white">Hours</p>
-              <p>11:00 AM - 1:00 AM</p>
+              <p>10:00 AM - 12:00 AM - Daily</p>
             </div>
-            <div>
-              <p className="font-semibold text-white">Payments</p>
-              <p>Razorpay, UPI, cash, card, and membership credit.</p>
-            </div>
+         
           </CardContent>
         </Card>
       </div>

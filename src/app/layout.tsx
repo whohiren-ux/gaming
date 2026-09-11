@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: `%s | ${CAFE_NAME}`
   },
   description:
-    "Realtime gaming cafe operating system for PS5, PS4, and racing wheel lounges.",
+    "Realtime gaming cafe operating system for PS5 and racing wheel lounges.",
   applicationName: CAFE_NAME,
   manifest: "/manifest.webmanifest",
   appleWebApp: {

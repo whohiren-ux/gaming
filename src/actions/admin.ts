@@ -66,6 +66,7 @@ export async function createMembershipPlanAction(formData: FormData) {
     type: formData.get("type"),
     price: formData.get("price"),
     includedMinutes: formData.get("includedMinutes"),
+    playerCount: formData.get("playerCount") || 1,
     discountPercent: formData.get("discountPercent"),
     priorityBooking: formData.get("priorityBooking") === "on",
     maxDailyMinutes: formData.get("maxDailyMinutes") || undefined,
@@ -91,6 +92,7 @@ export async function updateMembershipPlanAction(planId: string, formData: FormD
     type: formData.get("type"),
     price: formData.get("price"),
     includedMinutes: formData.get("includedMinutes"),
+    playerCount: formData.get("playerCount") || 1,
     discountPercent: formData.get("discountPercent"),
     priorityBooking: formData.get("priorityBooking") === "on",
     maxDailyMinutes: formData.get("maxDailyMinutes") || undefined,
@@ -179,4 +181,66 @@ export async function updateUserRoleAction(formData: FormData) {
   });
 
   revalidatePath("/admin/users");
+}
+
+export async function approveMembershipRequestAction(requestId: string) {
+  const session = await auth();
+  assertRole(session, ["ADMIN"]);
+
+  const request = await prisma.membershipRequest.findUnique({
+    where: { id: requestId },
+    include: { plan: true, user: { select: { name: true, email: true } } }
+  });
+
+  if (!request) throw new Error("Request not found.");
+  if (request.status !== "PENDING") throw new Error("Request is not pending.");
+
+  const { activateMembership } = await import("@/lib/membership-service");
+  await activateMembership({ userId: request.userId, planId: request.planId });
+
+  await prisma.membershipRequest.update({
+    where: { id: requestId },
+    data: { status: "APPROVED" }
+  });
+
+  const { createNotification } = await import("@/lib/notification-service");
+  await createNotification({
+    userId: request.userId,
+    type: "SYSTEM",
+    title: "Membership approved",
+    message: `Your ${request.plan.name} membership has been approved and activated.`,
+    metadata: { requestId, planName: request.plan.name }
+  });
+
+  revalidatePath("/admin/membership-requests");
+  revalidatePath("/membership-requests");
+}
+
+export async function rejectMembershipRequestAction(requestId: string, adminNote?: string) {
+  const session = await auth();
+  assertRole(session, ["ADMIN"]);
+
+  const request = await prisma.membershipRequest.findUnique({
+    where: { id: requestId },
+    include: { plan: true }
+  });
+
+  if (!request) throw new Error("Request not found.");
+  if (request.status !== "PENDING") throw new Error("Request is not pending.");
+
+  await prisma.membershipRequest.update({
+    where: { id: requestId },
+    data: { status: "REJECTED", adminNote: adminNote || undefined }
+  });
+
+  const { createNotification } = await import("@/lib/notification-service");
+  await createNotification({
+    userId: request.userId,
+    type: "SYSTEM",
+    title: "Membership request declined",
+    message: `Your ${request.plan.name} membership request has been declined.${adminNote ? ` Reason: ${adminNote}` : ""}`,
+    metadata: { requestId, planName: request.plan.name }
+  });
+
+  revalidatePath("/admin/membership-requests");
 }

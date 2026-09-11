@@ -86,22 +86,6 @@ async function main() {
       specs: { display: "65in OLED", controllers: 4, sound: "Dolby Atmos" }
     },
     {
-      stationCode: "PS4-01",
-      name: "PS4 Classic 01",
-      type: "PS4" as const,
-      hourlyPrice: price(220),
-      displayOrder: 4,
-      specs: { display: "43in 1080p", controllers: 2 }
-    },
-    {
-      stationCode: "PS4-02",
-      name: "PS4 Classic 02",
-      type: "PS4" as const,
-      hourlyPrice: price(220),
-      displayOrder: 5,
-      specs: { display: "43in 1080p", controllers: 2 }
-    },
-    {
       stationCode: "RW-01",
       name: "Racing Wheel 01",
       type: "GAMING_PC" as const,

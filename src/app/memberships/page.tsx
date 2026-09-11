@@ -15,7 +15,7 @@ export default async function MembershipPage() {
         Discounts and priority booking are applied by backend booking logic.
       </p>
       <div className="mt-8">
-        <MembershipPlans plans={plans.map((plan) => ({ ...plan, price: Number(plan.price) }))} />
+        <MembershipPlans plans={plans.map((plan) => ({ ...plan, price: Number(plan.price), playerCount: plan.playerCount ?? 1 }))} />
       </div>
     </main>
   );

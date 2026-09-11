@@ -17,7 +17,7 @@ export function SiteFooter() {
               <span className="font-brand text-sm font-bold tracking-wider text-white/90">{CAFE_NAME}</span>
             </div>
             <p className="text-xs leading-relaxed text-white/30">
-              Premium gaming experience with PS5, PS4, and racing wheel setups. Real-time booking and live session tracking.
+              Premium gaming experience with PS5 and racing wheel setups. Real-time booking and live session tracking.
             </p>
           </div>
 
@@ -45,7 +45,7 @@ export function SiteFooter() {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-[#ff0033]/60">Events</h4>
             <ul className="space-y-3">
               {[
-                { href: "/tournaments", label: "Tournaments" },
+                // { href: "/tournaments", label: "Tournaments" },
                 { href: "/contact", label: "Contact Us" },
               ].map((link) => (
                 <li key={link.href}>

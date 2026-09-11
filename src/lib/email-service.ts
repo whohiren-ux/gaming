@@ -122,7 +122,7 @@ export async function sendBookingConfirmationEmail(input: BookingEmailInput) {
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
           <tr>
-            <td style="background:linear-gradient(135deg,#6366f1,#a855f7);padding:32px;text-align:center;border-radius:16px 16px 0 0;">
+            <td style="background:linear-gradient(135deg,#0066FF,#00D4FF);padding:32px;text-align:center;border-radius:16px 16px 0 0;">
               <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:900;letter-spacing:1px;">${CAFE_NAME}</h1>
               <p style="margin:8px 0 0;color:rgba(255,255,255,0.85);font-size:14px;">Booking Confirmed</p>
             </td>
@@ -132,7 +132,7 @@ export async function sendBookingConfirmationEmail(input: BookingEmailInput) {
               <p style="color:#a1a1aa;font-size:14px;margin:0 0 8px;">Hi ${customerName},</p>
               <p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;">Your gaming session is confirmed! Here are your booking details:</p>
 
-              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#1a1a2e;border-radius:12px;padding:24px;margin-bottom:24px;border:1px solid rgba(99,102,241,0.2);">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#1a1a2e;border-radius:12px;padding:24px;margin-bottom:24px;border:1px solid rgba(0,102,255,0.2);">
                 <tr>
                   <td>
                     <table width="100%" cellpadding="0" cellspacing="0">
@@ -154,18 +154,14 @@ export async function sendBookingConfirmationEmail(input: BookingEmailInput) {
                       </tr>
                       <tr>
                         <td style="padding:6px 0;border-top:1px solid rgba(255,255,255,0.1);"><span style="color:#a1a1aa;font-size:13px;">Total</span></td>
-                        <td style="padding:6px 0;border-top:1px solid rgba(255,255,255,0.1);text-align:right;"><span style="color:#a855f7;font-size:18px;font-weight:900;">${total}</span></td>
+                        <td style="padding:6px 0;border-top:1px solid rgba(255,255,255,0.1);text-align:right;"><span style="color:#00D4FF;font-size:18px;font-weight:900;">${total}</span></td>
                       </tr>
                     </table>
                   </td>
                 </tr>
               </table>
 
-              <p style="color:#a1a1aa;font-size:13px;margin:0 0 16px;text-align:center;">Show this QR code at the cafe:</p>
-              <div style="text-align:center;margin-bottom:24px;">
-                <img src="cid:${qrContentId}" alt="Booking QR Code" width="256" height="256" style="border-radius:8px;background:#ffffff;padding:8px;" />
-                <p style="color:#71717a;font-size:12px;margin:8px 0 0;"><a href="${bookingLink}" style="color:#a855f7;text-decoration:none;">Open booking details</a></p>
-              </div>
+              <p style="color:#a1a1aa;font-size:13px;margin:0 0 16px;text-align:center;">Show this ticket at the cafe:</p>
 
               ${safeWhatsappLink ? `
               <div style="text-align:center;margin-bottom:24px;">
@@ -177,7 +173,7 @@ export async function sendBookingConfirmationEmail(input: BookingEmailInput) {
               ` : ""}
 
               <div style="text-align:center;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);">
-                <p style="color:#71717a;font-size:12px;margin:0;">This is an automated confirmation from ${CAFE_NAME}</p>
+                <p style="color:#71717a;font-size:12px;margin:0;">AUTHORIZED BY ${CAFE_NAME}</p>
               </div>
             </td>
           </tr>

@@ -2,7 +2,7 @@ import crypto from "crypto";
 
 import { Prisma, type BookingStatus, type PaymentMethod, type PrismaClient, type Setup, type SetupType } from "@prisma/client";
 
-import { BOOKING_HOLD_MINUTES, BOOKING_TOKEN_MINIMUM_INR, getSetupDisplayName } from "@/lib/constants";
+import { BOOKING_HOLD_MINUTES, getSetupDisplayName } from "@/lib/constants";
 import { addMinutesSafe, formatDateTime } from "@/lib/dates";
 import { sendBookingConfirmationEmail } from "@/lib/email-service";
 import { getOptionalEnv } from "@/lib/env";
@@ -214,7 +214,6 @@ export async function createBooking(input: {
   setupType: SetupType;
   startTime: Date;
   durationMinutes: number;
-  paymentIntent: "TOKEN" | "FULL";
   source?: "ONLINE" | "WALK_IN" | "ADMIN";
   notes?: string;
 }) {
@@ -243,10 +242,6 @@ export async function createBooking(input: {
       const discountedTotal = toDecimal(
         Math.ceil(toNumber(basePrice) * ((100 - discountPercent) / 100))
       );
-      const tokenAmount =
-        input.paymentIntent === "FULL"
-          ? discountedTotal
-          : toDecimal(Math.min(toNumber(discountedTotal), Math.max(BOOKING_TOKEN_MINIMUM_INR, Math.ceil(toNumber(discountedTotal) * 0.25))));
       const reference = createBookingReference();
 
       return tx.booking.create({
@@ -262,7 +257,7 @@ export async function createBooking(input: {
           durationMinutes: input.durationMinutes,
           bufferMinutes: setup.bufferMinutes,
           priceTotal: discountedTotal,
-          tokenAmount,
+          tokenAmount: discountedTotal,
           paidAmount: toDecimal(0),
           paymentStatus: "PENDING",
           notes: input.notes,
