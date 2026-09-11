@@ -4,12 +4,20 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { Gamepad2 } from "lucide-react";
+import { CheckCircle2, Clock, Gamepad2, Mail, AlertTriangle } from "lucide-react";
 
 import { AvailabilityBoard } from "@/components/booking/availability-board";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -33,7 +41,7 @@ type BookingResponse = {
 export function BookingConsole() {
   const { data: session, status } = useSession();
   const { setups, fetchAvailability, subscribeAvailability } = useCafeStore();
-  const [setupType, setSetupType] = useState<"PS5" | "PS4" | "GAMING_PC">("PS5");
+  const [setupType, setSetupType] = useState<"PS5" | "STERING_WHEEL">("PS5");
   const [setupId, setSetupId] = useState<string>("AUTO");
   const [durationMinutes, setDurationMinutes] = useState("60");
   const [startTime, setStartTime] = useState(() => {
@@ -42,6 +50,10 @@ export function BookingConsole() {
     return formatDateTimeLocalInput(date);
   });
   const [submitting, setSubmitting] = useState(false);
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [bookedReference, setBookedReference] = useState("");
+  const [bookedSetupType, setBookedSetupType] = useState("");
 
   useEffect(() => {
     fetchAvailability();
@@ -52,59 +64,6 @@ export function BookingConsole() {
     () => setups.filter((setup) => setup.type === setupType),
     [setupType, setups]
   );
-
-  async function createRazorpayPayment(booking: BookingResponse["booking"]) {
-    const amount =
-      paymentIntent === "FULL" ? Number(booking.priceTotal) : Number(booking.tokenAmount);
-
-    const response = await fetch("/api/payments/razorpay/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        bookingId: booking.id,
-        amount,
-        paymentType: paymentIntent
-      })
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || "Unable to create payment order.");
-    }
-
-    if (!data.keyId || !window.Razorpay) {
-      toast.success("Booking held. Razorpay is not configured in this environment.");
-      return;
-    }
-
-    const checkout = new window.Razorpay({
-      key: data.keyId,
-      amount: data.order.amount,
-      currency: data.order.currency,
-      name: CAFE_NAME,
-      description: `${booking.reference} · ${getSetupDisplayName(booking.setup)}`,
-      order_id: data.order.id,
-      handler: async (paymentResponse) => {
-        const verify = await fetch("/api/payments/razorpay/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(paymentResponse)
-        });
-
-        if (verify.ok) {
-          toast.success("Payment successful. Booking confirmed.");
-          fetchAvailability();
-        } else {
-          toast.warning("Payment received. Confirmation will update after webhook sync.");
-        }
-      },
-      theme: {
-        color: "#C20A16"
-      }
-    });
-
-    checkout.open();
-  }
 
   async function submitBooking(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -123,8 +82,7 @@ export function BookingConsole() {
           setupType,
           setupId: setupId === "AUTO" ? undefined : setupId,
           startTime: new Date(startTime).toISOString(),
-          durationMinutes: Number(durationMinutes),
-          paymentIntent
+          durationMinutes: Number(durationMinutes)
         })
       });
       const data = (await response.json()) as BookingResponse & { error?: string };
@@ -133,8 +91,9 @@ export function BookingConsole() {
         throw new Error(data.error || "Unable to create booking.");
       }
 
-      toast.success(`Slot held: ${data.booking.reference}`);
-      await createRazorpayPayment(data.booking);
+      setBookedReference(data.booking.reference);
+      setBookedSetupType(SETUP_TYPE_LABELS[setupType]);
+      setConfirmOpen(true);
       fetchAvailability();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Booking failed.");
@@ -150,13 +109,13 @@ export function BookingConsole() {
           <Badge variant="outline" className="w-fit">Online Booking</Badge>
           <CardTitle className="text-2xl">Reserve your setup</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Pick console type, duration, and token/full payment. Server-side rules prevent overlaps.
+            Pick console type, duration, and time slot. Server-side rules prevent overlaps.
           </p>
         </CardHeader>
         <CardContent>
           {status !== "loading" && !session?.user ? (
             <div className="mb-5 rounded-md border border-neon-amber/30 bg-neon-amber/10 p-4 text-sm text-neon-amber">
-              Login is required for QR confirmation and payment tracking.
+              Login is required to book a setup.
               <Button asChild className="mt-3 w-full" variant="warning">
                 <Link href="/login">Login to book</Link>
               </Button>
@@ -178,7 +137,6 @@ export function BookingConsole() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="PS5">PS5</SelectItem>
-                  <SelectItem value="PS4">PS4</SelectItem>
                   <SelectItem value="GAMING_PC">{SETUP_TYPE_LABELS.GAMING_PC}</SelectItem>
                 </SelectContent>
               </Select>
@@ -228,35 +186,6 @@ export function BookingConsole() {
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setPaymentIntent("TOKEN")}
-                className={`rounded-md border p-4 text-left transition ${
-                  paymentIntent === "TOKEN"
-                    ? "border-neon-cyan bg-neon-blue/10"
-                    : "border-white/10 bg-white/[0.03]"
-                }`}
-              >
-                <CalendarClock className="size-5 text-neon-cyan" />
-                <p className="mt-3 font-semibold">Token</p>
-                <p className="text-xs text-muted-foreground">Pay minimum hold amount</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPaymentIntent("FULL")}
-                className={`rounded-md border p-4 text-left transition ${
-                  paymentIntent === "FULL"
-                    ? "border-neon-cyan bg-neon-blue/10"
-                    : "border-white/10 bg-white/[0.03]"
-                }`}
-              >
-                <CreditCard className="size-5 text-neon-green" />
-                <p className="mt-3 font-semibold">Full</p>
-                <p className="text-xs text-muted-foreground">Settle the slot upfront</p>
-              </button>
-            </div>
-
             <Button className="w-full" disabled={submitting || !session?.user} size="lg">
               <Gamepad2 />
               {submitting ? "Creating booking..." : `Book ${SETUP_TYPE_LABELS[setupType]}`}
@@ -266,6 +195,65 @@ export function BookingConsole() {
       </Card>
 
       <AvailabilityBoard compact />
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-neon-blue/15">
+              <CheckCircle2 className="h-7 w-7 text-neon-blue" />
+            </div>
+            <DialogTitle className="text-center text-xl">
+              Thank You for Booking!
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Your <span className="font-semibold text-foreground">{bookedSetupType}</span> slot
+              has been reserved. We look forward to seeing you!
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs text-muted-foreground">Booking Reference</p>
+            <p className="mt-0.5 font-mono text-sm font-bold tracking-wider text-neon-cyan">
+              {bookedReference}
+            </p>
+          </div>
+
+          <div className="space-y-2.5 text-sm text-muted-foreground">
+            <div className="flex items-start gap-2">
+              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-neon-blue" />
+              <p>
+                A confirmation email is on its way.
+                It usually arrives within <span className="font-semibold text-foreground">10–20 minutes</span>.
+                {" "}If you cannot find it in your <span className="font-semibold text-neon-cyan">Inbox</span>,
+                please check your <span className="font-semibold text-neon-amber">Spam / Junk</span> folder.
+              </p>
+            </div>
+            <div className="flex items-start gap-2">
+              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-neon-cyan" />
+              <p>
+                Kindly arrive <span className="font-semibold text-foreground">at least 10 minutes before</span> your
+                scheduled time. Show the confirmation email at the counter to check in.
+              </p>
+            </div>
+            <div className="flex items-start gap-2 rounded-md border border-neon-amber/30 bg-neon-amber/10 p-2.5">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-neon-amber" />
+              <p className="text-neon-amber">
+                If you do not arrive within <span className="font-semibold">10 minutes</span> of
+                your booked time, your slot may be reassigned to another guest THANK YOU.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              className="w-full"
+              onClick={() => setConfirmOpen(false)}
+            >
+              Got it
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

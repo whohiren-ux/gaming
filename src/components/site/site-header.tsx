@@ -13,7 +13,7 @@ const navItems = [
   { href: "/pricing", label: "Pricing" },
   { href: "/availability", label: "Availability" },
   { href: "/memberships", label: "Memberships" },
-  { href: "/tournaments", label: "Events" },
+  // { href: "/tournaments", label: "Events" },
   { href: "/contact", label: "Contact" },
 ];
 

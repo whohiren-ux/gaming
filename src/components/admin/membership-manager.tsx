@@ -47,6 +47,7 @@ type Plan = {
   type: string;
   price: number;
   includedMinutes: number;
+  playerCount: number;
   discountPercent: number;
   priorityBooking: boolean;
   maxDailyMinutes: number | null;
@@ -191,12 +192,19 @@ export function MembershipManager({ plans, users }: { plans: Plan[]; users: User
                   <Input name="price" type="number" min="0" step="1" required />
                 </div>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
                   <Label>Included minutes</Label>
                   <Input name="includedMinutes" type="number" min="0" required />
                   <p className="text-xs text-muted-foreground">
                     {">"}0 = {">"}0 hours included
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Players</Label>
+                  <Input name="playerCount" type="number" min="1" defaultValue="1" required />
+                  <p className="text-xs text-muted-foreground">
+                    No. of players
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -340,10 +348,14 @@ export function MembershipManager({ plans, users }: { plans: Plan[]; users: User
                           <Input name="price" type="number" min="0" defaultValue={plan.price} required />
                         </div>
                       </div>
-                      <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="grid gap-4 sm:grid-cols-3">
                         <div className="space-y-2">
                           <Label>Included minutes</Label>
                           <Input name="includedMinutes" type="number" min="0" defaultValue={plan.includedMinutes} required />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Players</Label>
+                          <Input name="playerCount" type="number" min="1" defaultValue={plan.playerCount} required />
                         </div>
                         <div className="space-y-2">
                           <Label>Discount %</Label>
@@ -388,6 +400,10 @@ export function MembershipManager({ plans, users }: { plans: Plan[]; users: User
                           <span className="flex items-center gap-1.5">
                             <Clock className="size-3.5" />
                             {Math.floor(plan.includedMinutes / 60)}h {plan.includedMinutes % 60}m
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <Users className="size-3.5" />
+                            {plan.playerCount} player{plan.playerCount > 1 ? "s" : ""}
                           </span>
                           <span className="flex items-center gap-1.5">
                             <Percent className="size-3.5" />

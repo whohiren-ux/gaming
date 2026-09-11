@@ -12,7 +12,6 @@ export const BOOKING_TOKEN_MINIMUM_INR = 100;
 
 export const SETUP_TYPE_LABELS = {
   PS5: "PlayStation 5",
-  PS4: "PlayStation 4",
   GAMING_PC: "Racing Wheel"
 } as const;
 

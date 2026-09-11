@@ -10,6 +10,11 @@ import {
   TournamentStatus
 } from "@prisma/client";
 
+export const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters")
+});
+
 export const registerSchema = z.object({
   name: z.string().min(2).max(80),
   email: z.string().email().max(160),
@@ -44,7 +49,6 @@ export const bookingCreateSchema = z.object({
   setupType: z.nativeEnum(SetupType),
   startTime: z.coerce.date(),
   durationMinutes: z.coerce.number().int().min(30).max(480),
-  paymentIntent: z.enum(["TOKEN", "FULL"]).default("TOKEN"),
   source: z.nativeEnum(BookingSource).default("ONLINE"),
   notes: z.string().max(500).optional()
 });
@@ -100,6 +104,7 @@ export const membershipPlanSchema = z.object({
   type: z.nativeEnum(MembershipType),
   price: z.coerce.number().min(0),
   includedMinutes: z.coerce.number().int().min(0),
+  playerCount: z.coerce.number().int().min(1).default(1),
   discountPercent: z.coerce.number().int().min(0).max(90),
   priorityBooking: z.coerce.boolean().default(false),
   maxDailyMinutes: z.coerce.number().int().min(0).optional(),

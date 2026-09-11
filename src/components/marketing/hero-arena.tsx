@@ -72,7 +72,7 @@ export function HeroArena() {
             <div className="mb-6 flex w-full items-center justify-center gap-2 rounded-full border border-[#0066ff]/30 bg-[#0066ff]/8 px-3 py-2 lg:inline-flex lg:w-auto lg:justify-start lg:px-4 lg:py-1.5">
               <span className="status-dot" />
               <span className="whitespace-nowrap font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-[#00d4ff] min-[390px]:text-[0.68rem] lg:text-[0.68rem] lg:tracking-[0.18em]">
-                PS5 - PS4 - Racing Wheel - Live
+                PS5 -  Racing Wheel - Live
               </span>
             </div>
 
