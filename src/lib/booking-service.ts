@@ -34,6 +34,12 @@ type BookingConfirmationNotificationInput = {
   };
 };
 
+type BookingConfirmationNotificationResult = {
+  emailSent: boolean;
+  emailSkippedReason?: "missing-customer-email" | "smtp-not-configured";
+  emailError?: string;
+};
+
 function createBookingReference() {
   const stamp = Date.now().toString(36).toUpperCase();
   const random = crypto.randomBytes(4).toString("hex").toUpperCase();
@@ -344,7 +350,7 @@ export async function confirmBookingPayment(
 
 export async function createBookingConfirmationNotification(
   booking: BookingConfirmationNotificationInput
-) {
+): Promise<BookingConfirmationNotificationResult> {
   await createNotification({
     userId: booking.customerId,
     type: "BOOKING_CONFIRMATION",
@@ -359,8 +365,7 @@ export async function createBookingConfirmationNotification(
   if (booking.customer.email) {
     const cafePhone = getOptionalEnv("CAFE_PHONE");
     try {
-      alert(booking.customer.email);
-      await sendBookingConfirmationEmail({
+      const emailInfo = await sendBookingConfirmationEmail({
         customerName: booking.customer.name ?? "Gamer",
         customerEmail: booking.customer.email,
         customerPhone: booking.customer.phone,
@@ -372,12 +377,23 @@ export async function createBookingConfirmationNotification(
         qrUrl: absoluteUrl(`/booking?reference=${booking.reference}`),
         cafePhone
       });
+
+      if (!emailInfo) {
+        return { emailSent: false, emailSkippedReason: "smtp-not-configured" };
+      }
+
       console.log(`[booking-service] Confirmation email sent for booking ${booking.reference}`);
+      return { emailSent: true };
     } catch (err) {
       console.error("[booking-service] Failed to send confirmation email:", err);
+      return {
+        emailSent: false,
+        emailError: err instanceof Error ? err.message : "Unknown email error"
+      };
     }
   } else {
     console.warn(`[booking-service] No email for customer ${booking.customerId}, skipping email`);
+    return { emailSent: false, emailSkippedReason: "missing-customer-email" };
   }
 }
 
