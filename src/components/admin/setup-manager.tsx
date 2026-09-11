@@ -22,7 +22,7 @@ type SetupRow = {
   id: string;
   stationCode: string;
   name: string;
-  type: "PS5" | "STERING WHEEEL";
+  type: "PS5" | "STERING_WHEEL";
   hourlyPrice: number;
   status: string;
   floor: string;
@@ -129,7 +129,7 @@ export function SetupManager({ initialSetups }: { initialSetups: SetupRow[] }) {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="PS5">PS5</SelectItem>
-                    <SelectItem value="GAMING_PC">{SETUP_TYPE_LABELS.GAMING_PC}</SelectItem>
+                    <SelectItem value="STERING_WHEEL">{SETUP_TYPE_LABELS.STERING_WHEEL}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

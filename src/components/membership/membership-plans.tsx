@@ -230,7 +230,7 @@ export function MembershipPlans({ plans }: { plans: Plan[] }) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="PS5">PlayStation 5</SelectItem>
-                  <SelectItem value="GAMING_PC">Racing Wheel</SelectItem>
+                  <SelectItem value="STERING_WHEEL">Racing Wheel</SelectItem>
                 </SelectContent>
               </Select>
             </div>

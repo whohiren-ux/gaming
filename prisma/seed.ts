@@ -88,7 +88,7 @@ async function main() {
     {
       stationCode: "RW-01",
       name: "Racing Wheel 01",
-      type: "GAMING_PC" as const,
+      type: "STERING_WHEEL" as const,
       hourlyPrice: price(180),
       displayOrder: 6,
       specs: { wheel: "Logitech G29", pedals: "3-pedal set", display: "55in 4K" }
@@ -96,7 +96,7 @@ async function main() {
     {
       stationCode: "RW-02",
       name: "Racing Wheel 02",
-      type: "GAMING_PC" as const,
+      type: "STERING_WHEEL" as const,
       hourlyPrice: price(180),
       displayOrder: 7,
       specs: { wheel: "Thrustmaster T300 RS", pedals: "T3PA", display: "55in 4K" }
@@ -104,7 +104,7 @@ async function main() {
     {
       stationCode: "RW-03",
       name: "Racing Wheel 03",
-      type: "GAMING_PC" as const,
+      type: "STERING_WHEEL" as const,
       hourlyPrice: price(180),
       displayOrder: 8,
       specs: { wheel: "Logitech G923", pedals: "Trueforce pedals", display: "43in 4K" }
