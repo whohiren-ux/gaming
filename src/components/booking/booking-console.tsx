@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { CalendarClock, CreditCard, Gamepad2 } from "lucide-react";
+import { Gamepad2 } from "lucide-react";
 
 import { AvailabilityBoard } from "@/components/booking/availability-board";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { CAFE_NAME, getSetupDisplayName, SETUP_TYPE_LABELS } from "@/lib/constants";
+import { getSetupDisplayName, SETUP_TYPE_LABELS } from "@/lib/constants";
 import { formatDateTimeLocalInput } from "@/lib/dates";
 import { useCafeStore } from "@/store/cafe-store";
 
@@ -27,9 +27,6 @@ type BookingResponse = {
   booking: {
     id: string;
     reference: string;
-    tokenAmount: string | number;
-    priceTotal: string | number;
-    setup: { name: string; type?: string };
   };
 };
 
@@ -44,25 +41,12 @@ export function BookingConsole() {
     date.setSeconds(0, 0);
     return formatDateTimeLocalInput(date);
   });
-  const [paymentIntent, setPaymentIntent] = useState<"TOKEN" | "FULL">("TOKEN");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetchAvailability();
     return subscribeAvailability();
   }, [fetchAvailability, subscribeAvailability]);
-
-  useEffect(() => {
-    if (window.Razorpay || document.getElementById("razorpay-checkout")) {
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = "razorpay-checkout";
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
 
   const selectableSetups = useMemo(
     () => setups.filter((setup) => setup.type === setupType),
