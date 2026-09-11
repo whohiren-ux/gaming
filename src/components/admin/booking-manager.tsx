@@ -23,6 +23,15 @@ type BookingRow = {
   customer: { name?: string | null; email?: string | null; phone?: string | null };
 };
 
+type BookingUpdateResponse = {
+  error?: string;
+  confirmation?: {
+    emailSent: boolean;
+    emailSkippedReason?: "missing-customer-email" | "smtp-not-configured";
+    emailError?: string;
+  } | null;
+};
+
 export function BookingManager({ initialBookings }: { initialBookings: BookingRow[] }) {
   const [bookings, setBookings] = useState(initialBookings);
 
@@ -38,6 +47,23 @@ export function BookingManager({ initialBookings }: { initialBookings: BookingRo
       return;
     }
     setBookings((current) => current.map((booking) => (booking.id === id ? { ...booking, status } : booking)));
+
+    const result = data as BookingUpdateResponse;
+    if (status === "CONFIRMED") {
+      if (result.confirmation?.emailSent) {
+        toast.success("Booking confirmed. Confirmation email sent.");
+      } else if (result.confirmation?.emailSkippedReason === "missing-customer-email") {
+        toast.warning("Booking confirmed, but the customer has no email.");
+      } else if (result.confirmation?.emailSkippedReason === "smtp-not-configured") {
+        toast.warning("Booking confirmed, but Gmail SMTP is not configured.");
+      } else if (result.confirmation?.emailError) {
+        toast.warning("Booking confirmed, but email failed to send.");
+      } else {
+        toast.success("Booking confirmed.");
+      }
+      return;
+    }
+
     toast.success("Booking updated.");
   }
 

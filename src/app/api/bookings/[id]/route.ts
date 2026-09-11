@@ -61,8 +61,13 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       include: { setup: true, customer: true }
     });
 
-    if (existing.status !== "CONFIRMED" && input.status === "CONFIRMED") {
-      await createBookingConfirmationNotification(booking);
+    const confirmation =
+      existing.status !== "CONFIRMED" && input.status === "CONFIRMED"
+        ? await createBookingConfirmationNotification(booking)
+        : null;
+
+    if (confirmation?.emailError) {
+      console.error("[booking-route] Confirmation email failed:", confirmation.emailError);
     }
 
     await publishRealtime(REALTIME_CHANNELS.availability, REALTIME_EVENTS.bookingChanged, {
@@ -71,7 +76,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       status: booking.status
     });
 
-    return ok({ booking });
+    return ok({ booking, confirmation });
   } catch (error) {
     return apiError(error);
   }
