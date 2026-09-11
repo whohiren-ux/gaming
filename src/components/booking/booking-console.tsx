@@ -137,7 +137,7 @@ export function BookingConsole() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="PS5">PS5</SelectItem>
-                  <SelectItem value="GAMING_PC">{SETUP_TYPE_LABELS.GAMING_PC}</SelectItem>
+                  <SelectItem value="STERING_WHEEL">{SETUP_TYPE_LABELS.STERING_WHEEL}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

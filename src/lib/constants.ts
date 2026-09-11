@@ -12,7 +12,7 @@ export const BOOKING_TOKEN_MINIMUM_INR = 100;
 
 export const SETUP_TYPE_LABELS = {
   PS5: "PlayStation 5",
-  GAMING_PC: "Racing Wheel"
+  STERING_WHEEL: "Racing Wheel"
 } as const;
 
 type SetupDisplayInput = {
@@ -28,7 +28,7 @@ export function getSetupTypeLabel(type: string) {
 export function getSetupDisplayName(setup: SetupDisplayInput) {
   const name = setup.name ?? "";
 
-  if (setup.type !== "GAMING_PC") {
+  if (setup.type !== "STERING_WHEEL") {
     return name;
   }
 
@@ -40,7 +40,7 @@ export function getSetupDisplayName(setup: SetupDisplayInput) {
 export function getSetupDisplayCode(setup: SetupDisplayInput) {
   const stationCode = setup.stationCode ?? "";
 
-  if (setup.type === "GAMING_PC") {
+  if (setup.type === "STERING_WHEEL") {
     return stationCode.replace(/^PC-/i, "RW-");
   }
 
